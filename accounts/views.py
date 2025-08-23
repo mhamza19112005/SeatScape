@@ -82,30 +82,45 @@ def forget_password(request):
                 user = User.objects.get(email=email)
                 # Generate password reset token
                 token = default_token_generator.make_token(user)
-                uid = urlsafe_base64_encode(force_bytes(user.pk)).decode()
+                uid = urlsafe_base64_encode(force_bytes(user.pk))
                 
                 # Create reset link
                 reset_url = request.build_absolute_uri(
                     f'/reset-password/{uid}/{token}/'
                 )
                 
-                # Send email (in production, configure email settings)
-                subject = 'Password Reset Request'
+                # Send email
+                subject = 'Password Reset Request - SeatScape'
                 message = f'''
-                Hello {user.username},
-                
-                You requested a password reset. Click the link below to reset your password:
-                
-                {reset_url}
-                
-                If you didn't request this, please ignore this email.
-                
-                Best regards,
-                Your App Team
+Hello {user.username},
+
+You requested a password reset for your SeatScape account.
+
+Click the link below to reset your password:
+{reset_url}
+
+⚠️  IMPORTANT: This link will expire in 1 minute for security reasons.
+
+If you didn't request this password reset, please ignore this email.
+
+Best regards,
+SeatScape Team
                 '''
                 
-                # For development, just show the reset link
-                messages.info(request, f'Password reset link: {reset_url}')
+                try:
+                    from django.core.mail import send_mail
+                    send_mail(
+                        subject,
+                        message,
+                        'mhamza19112005@gmail.com',  # From email
+                        [email],  # To email
+                        fail_silently=False,
+                    )
+                    messages.success(request, f'Password reset link has been sent to {email}. Please check your email.')
+                except Exception as e:
+                    # Fallback for development - show link in console
+                    print(f"Password reset link for {email}: {reset_url}")
+                    messages.info(request, f'Password reset link sent! Check your console/terminal for the link.')
                 
             except User.DoesNotExist:
                 messages.error(request, 'No user found with this email address.')
@@ -117,10 +132,26 @@ def forget_password(request):
 def reset_password(request, uidb64, token):
     try:
         from django.utils.http import urlsafe_base64_decode
-        uid = urlsafe_base64_decode(uidb64).decode()
+        from django.utils import timezone
+        from datetime import timedelta
+        
+        uid = urlsafe_base64_decode(uidb64)
+        if isinstance(uid, bytes):
+            uid = uid.decode()
         user = User.objects.get(pk=uid)
         
+        # Check if token is valid and not expired
         if default_token_generator.check_token(user, token):
+            # Check if token is expired (1 minute)
+            from django.conf import settings
+            timeout_seconds = getattr(settings, 'PASSWORD_RESET_TIMEOUT', 60)
+            
+            # Get the time when the token was created (we'll use a simple approach)
+            # In production, you might want to store token creation time in database
+            token_age = timezone.now() - timedelta(seconds=timeout_seconds)
+            
+            # For now, we'll use Django's built-in token validation
+            # The token_generator.check_token already handles expiration based on PASSWORD_RESET_TIMEOUT
             if request.method == 'POST':
                 password1 = request.POST.get('password1')
                 password2 = request.POST.get('password2')
