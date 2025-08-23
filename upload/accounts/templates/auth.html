@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Auth</title>
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;600&display=swap" rel="stylesheet">
+    <style>
+        *,
+        *:before,
+        *:after{
+            padding: 0;
+            margin: 0;
+            box-sizing: border-box;
+        }
+        body { 
+            background:#080710; 
+            font-family: Arial, sans-serif; 
+            color:#fff; 
+        }
+        .container {
+            width: 440px; 
+            margin: 60px auto; 
+            background-color: rgba(255,255,255,0.13);
+            border-radius: 10px; 
+            border: 2px solid rgba(255,255,255,0.1); 
+            padding: 24px 24px 32px;
+            box-shadow: 0 0 40px rgba(8,7,16,0.6);
+        }
+        h2 { 
+            text-align:center; 
+            margin: 0 0 16px; 
+            font-weight: 600; 
+        }
+        .tabs { 
+            display:flex; 
+            border-bottom: 1px solid rgba(255,255,255,0.25); 
+            margin-bottom:16px; 
+        }
+        .tab { 
+            flex:1; 
+            text-align:center; 
+            padding:10px; 
+            cursor:pointer; 
+            transition: all 0.3s ease;
+        }
+        .tab:hover {
+            background: rgba(255,255,255,0.1);
+        }
+        .tab.active { 
+            border-bottom: 2px solid #fff; 
+            font-weight: bold; 
+        }
+        label { 
+            display:block; 
+            margin-top:16px; 
+            font-size:14px; 
+        }
+        input { 
+            width:100%; 
+            height:44px; 
+            margin-top:6px; 
+            padding:0 10px; 
+            border-radius:4px;
+            border:none; 
+            background-color: rgba(255,255,255,0.07); 
+            color:#fff; 
+            transition: all 0.3s ease;
+        }
+        input:focus {
+            background-color: rgba(255,255,255,0.1);
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(255,255,255,0.3);
+        }
+        button { 
+            margin-top:18px; 
+            width:100%; 
+            height:46px; 
+            background:#fff; 
+            color:#080710; 
+            border:none; 
+            border-radius:5px; 
+            font-weight:600; 
+            cursor:pointer; 
+            transition: all 0.3s ease;
+        }
+        button:hover {
+            background: #f0f0f0;
+            transform: translateY(-2px);
+        }
+        .messages { 
+            margin: 8px 0; 
+        }
+        .messages li { 
+            list-style:none; 
+            padding: 8px 10px; 
+            background: rgba(255,255,255,0.15); 
+            border-radius: 6px; 
+            margin-bottom: 6px; 
+            border-left: 4px solid #ff6b6b;
+        }
+        .messages li.success {
+            border-left-color: #51cf66;
+            background: rgba(81, 207, 102, 0.2);
+        }
+        .hidden { 
+            display:none; 
+        }
+        a { 
+            color: #a6d4ff; 
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        a:hover {
+            color: #fff;
+            text-decoration: underline;
+        }
+        .forget-password {
+            text-align: center;
+            margin-top: 10px;
+        }
+        .forget-password a {
+            font-size: 12px;
+            color: #ccc;
+        }
+        .forget-password a:hover {
+            color: #a6d4ff;
+        }
+        .background{
+            width: 430px;
+            height: 550px;
+            position: absolute;
+            transform: translate(-50%,-50%);
+            left: 50%;
+            top: 50%;
+            z-index: -1;
+        }
+        .background .shape{
+            height: 200px;
+            width: 200px;
+            position: absolute;
+            border-radius: 50%;
+        }
+        .shape:first-child{
+            background: linear-gradient(
+                #1845ad,
+                #23a2f6
+            );
+            left: -80px;
+            top: -80px;
+        }
+        .shape:last-child{
+            background: linear-gradient(
+                to right,
+                #ff512f,
+                #f09819
+            );
+            right: -30px;
+            bottom: -80px;
+        }
+        .social-login {
+            margin-top: 20px;
+            text-align: center;
+        }
+        .social-btn {
+            display: inline-block;
+            width: 100%;
+            padding: 12px;
+            margin: 5px 0;
+            border: 1px solid rgba(255,255,255,0.3);
+            border-radius: 5px;
+            background: rgba(255,255,255,0.1);
+            color: white;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        .social-btn:hover {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            text-decoration: none;
+        }
+        .social-btn.google {
+            background: #db4437;
+            border-color: #db4437;
+        }
+        .social-btn.google:hover {
+            background: #c23321;
+        }
+    </style>
+</head>
+<body>
+    <div class="background">
+        <div class="shape"></div>
+        <div class="shape"></div>
+    </div>
+    
+    <div class="container">
+        <h2>Welcome</h2>
+        
+        {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+            <li class="{% if message.tags == 'success' %}success{% endif %}">
+                {% if message.tags == 'success' %}
+                    <i class="fas fa-check-circle"></i>
+                {% else %}
+                    <i class="fas fa-exclamation-circle"></i>
+                {% endif %}
+                {{ message }}
+            </li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+        
+        <div class="tabs">
+            <div class="tab active" id="tab-login">Login</div>
+            <div class="tab" id="tab-signup">Sign Up</div>
+        </div>
+        
+        <!-- Login Form -->
+        <form id="form-login" method="post">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="login">
+            {% if request.GET.next %}
+            <input type="hidden" name="next" value="{{ request.GET.next }}">
+            {% endif %}
+            
+            <label for="username">Username</label>
+            <input type="text" placeholder="Enter Username" id="username" name="username" required>
+            
+            <label for="password">Password</label>
+            <input type="password" placeholder="Password" id="password" name="password" required>
+            
+            <button type="submit">Log In</button>
+            
+            <div class="forget-password">
+                <a href="{% url 'forget_password' %}">Forgot Password?</a>
+            </div>
+            
+            <p style="text-align: center; margin-top: 16px;">
+                No account? <a href="#" onclick="activate('signup'); return false;">Sign Up</a>
+            </p>
+        </form>
+        
+        <!-- Signup Form -->
+        <form id="form-signup" method="post" class="hidden">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="signup">
+            {% if request.GET.next %}
+            <input type="hidden" name="next" value="{{ request.GET.next }}">
+            {% endif %}
+            
+            <label for="signup-username">Username</label>
+            <input type="text" placeholder="Username" name="username" id="signup-username" required>
+            
+            <label for="email">Email</label>
+            <input type="email" placeholder="Email" name="email" id="email" required>
+            
+            <label for="password1">Password</label>
+            <input type="password" placeholder="Password" id="password1" name="password1" required>
+            
+            <label for="password2">Confirm Password</label>
+            <input type="password" placeholder="Confirm Password" id="password2" name="password2" required>
+            
+            <button type="submit">Create Account</button>
+            
+            <p style="text-align: center; margin-top: 16px;">
+                Already have an account? <a href="#" onclick="activate('login'); return false;">Login</a>
+            </p>
+        </form>
+        
+        <!-- Social Login -->
+        <div class="social-login">
+            <p style="margin-bottom: 15px; color: #ccc; font-size: 14px;">Or continue with</p>
+            <a href="#" class="social-btn google">
+                <i class="fab fa-google"></i> Continue with Google
+            </a>
+        </div>
+    </div>
+
+    <script>
+        const tabLogin = document.getElementById('tab-login');
+        const tabSignup = document.getElementById('tab-signup');
+        const formLogin = document.getElementById('form-login');
+        const formSignup = document.getElementById('form-signup');
+
+        function activate(tab) {
+            if (tab === 'login') {
+                tabLogin.classList.add('active');
+                tabSignup.classList.remove('active');
+                formLogin.classList.remove('hidden');
+                formSignup.classList.add('hidden');
+            } else {
+                tabSignup.classList.add('active');
+                tabLogin.classList.remove('active');
+                formSignup.classList.remove('hidden');
+                formLogin.classList.add('hidden');
+            }
+        }
+
+        tabLogin.addEventListener('click', () => activate('login'));
+        tabSignup.addEventListener('click', () => activate('signup'));
+        
+        // Set initial active tab based on context
+        {% if active_tab == 'signup' %}
+        activate('signup');
+        {% endif %}
+        
+        // Auto-hide success messages after 5 seconds
+        setTimeout(function() {
+            const successMessages = document.querySelectorAll('.messages li.success');
+            successMessages.forEach(function(msg) {
+                msg.style.opacity = '0';
+                setTimeout(function() {
+                    msg.remove();
+                }, 300);
+            });
+        }, 5000);
+    </script>
+</body>
+</html>

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Events</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        .event-card {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .event-card h2 {
+            margin-top: 0;
+            color: #007bff;
+        }
+        .event-card p {
+            color: #666;
+        }
+        .view-details {
+            display: inline-block;
+            background: #007bff;
+            color: white;
+            padding: 10px 15px;
+            text-decoration: none;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+        .view-details:hover {
+            background: #0056b3;
+        }
+        .no-events {
+            text-align: center;
+            color: #666;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Available Events</h1>
+
+        {% for event in events %}
+            <div class="event-card">
+                <h2>{{ event.name }}</h2>
+                <p><strong>Date:</strong> {{ event.date }}</p>
+                <p><strong>Location:</strong> {{ event.location }}</p>
+                <p>{{ event.description }}</p>
+                <a href="{% url 'event_detail' event.id %}" class="view-details">View Details</a>
+            </div>
+        {% empty %}
+            <p class="no-events">No events available.</p>
+        {% endfor %}
+    </div>
+</body>
+</html>
