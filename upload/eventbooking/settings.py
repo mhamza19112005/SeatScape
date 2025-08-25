@@ -155,7 +155,7 @@ DEFAULT_FROM_EMAIL = 'mhamza19112005@gmail.com'
 CONTACT_RECEIVER_EMAIL = 'mhamza19112005@gmail.com'
 
 # Password Reset Token Expiration (1 minute)
-PASSWORD_RESET_TIMEOUT = 60  # 60 seconds = 1 minute
+PASSWORD_RESET_TIMEOUT = 120  # 60 seconds = 1 minute
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field

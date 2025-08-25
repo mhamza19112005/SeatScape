@@ -141,8 +141,8 @@ LOGOUT_REDIRECT_URL = 'login'
 # Messages Framework
 MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
 
-# Password Reset Token Expiration (1 minute)
-PASSWORD_RESET_TIMEOUT = 60  # 60 seconds = 1 minute
+# Password Reset Token Expiration (2 minute)
+PASSWORD_RESET_TIMEOUT = 120  # 60 seconds = 1 minute
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field

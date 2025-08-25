@@ -1,343 +1,499 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Checkout - {{ ticket.seat.row.event.name }}</title>
-    <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-        
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            line-height: 1.6;
-            color: #333;
-            background-color: #f8f9fa;
-        }
-        
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        
-        .page-header {
-            text-align: center;
-            margin-bottom: 30px;
-            padding-bottom: 20px;
-            border-bottom: 1px solid #e0e0e0;
-        }
-        
-        .page-header h1 {
-            color: #2c3e50;
-            margin-bottom: 10px;
-        }
-        
-        .event-info {
-            background: white;
-            border-radius: 8px;
-            padding: 20px;
-            margin-bottom: 30px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        
-        .event-info h2 {
-            color: #007bff;
-            margin-bottom: 15px;
-        }
-        
-        .event-details {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 15px;
-            margin-bottom: 20px;
-        }
-        
-        .event-detail-item {
-            background-color: #e3f2fd;
-            padding: 8px 15px;
-            border-radius: 20px;
-            font-size: 14px;
-        }
-        
-        .ticket-info {
-            background: white;
-            border-radius: 8px;
-            padding: 20px;
-            margin-bottom: 30px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        
-        .ticket-info h2 {
-            color: #007bff;
-            margin-bottom: 15px;
-        }
-        
-        .ticket-details {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px;
-            background-color: #f8f9fa;
-            border-radius: 8px;
-            margin-bottom: 20px;
-        }
-        
-        .ticket-details h3 {
-            margin: 0;
-            color: #2c3e50;
-        }
-        
-        .ticket-price {
-            font-size: 24px;
-            font-weight: bold;
-            color: #007bff;
-        }
-        
-        .checkout-form {
-            background: white;
-            border-radius: 8px;
-            padding: 20px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        
-        .checkout-form h2 {
-            color: #007bff;
-            margin-bottom: 20px;
-        }
-        
-        .form-group {
-            margin-bottom: 20px;
-        }
-        
-        .form-group label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: 500;
-        }
-        
-        .form-group input,
-        .form-group select {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ced4da;
-            border-radius: 4px;
-            font-size: 16px;
+{% extends 'base.html' %}
+
+{% block title %}Checkout - {{ ticket.seat.row.event.name }}{% endblock %}
+
+{% block extra_css %}
+<style>
+    .checkout-container {
+        background: linear-gradient(135deg, #f8fafc, #e2e8f0);
+        min-height: 100vh;
+        padding: 2rem 0;
+    }
+    
+    .checkout-header {
+        text-align: center;
+        margin-bottom: 3rem;
+    }
+    
+    .checkout-header h1 {
+        color: var(--dark-color);
+        margin-bottom: 1rem;
+    }
+    
+    .checkout-header p {
+        color: #6b7280;
+        font-size: 1.1rem;
+    }
+    
+    .checkout-content {
+        max-width: 1000px;
+        margin: 0 auto;
+    }
+    
+    .event-info-card {
+        background: white;
+        border-radius: 15px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.07);
+        border-left: 5px solid var(--primary-color);
+    }
+    
+    .event-info-card h2 {
+        color: var(--primary-color);
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+    }
+    
+    .event-details-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .event-detail-item {
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        color: white;
+        padding: 1rem;
+        border-radius: 10px;
+        text-align: center;
+        font-weight: 500;
+    }
+    
+    .ticket-info-card {
+        background: white;
+        border-radius: 15px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.07);
+        border-left: 5px solid var(--success-color);
+    }
+    
+    .ticket-info-card h2 {
+        color: var(--success-color);
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+    }
+    
+    .ticket-details-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1.5rem;
+        background: #f8fafc;
+        border-radius: 10px;
+        margin-bottom: 1.5rem;
+        border: 2px solid #e2e8f0;
+    }
+    
+    .ticket-details-row h3 {
+        margin: 0;
+        color: var(--dark-color);
+        font-size: 1.2rem;
+    }
+    
+    .ticket-price {
+        font-size: 2rem;
+        font-weight: bold;
+        color: var(--success-color);
+        background: linear-gradient(135deg, var(--success-color), #34d399);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+    
+    .checkout-form-card {
+        background: white;
+        border-radius: 15px;
+        padding: 2rem;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.07);
+        border-left: 5px solid var(--accent-color);
+    }
+    
+    .checkout-form-card h2 {
+        color: var(--accent-color);
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+    }
+    
+    .form-row {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+    
+    .form-label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+        color: var(--dark-color);
+    }
+    
+    .form-control {
+        width: 100%;
+        padding: 1rem;
+        border: 2px solid #e2e8f0;
+        border-radius: 10px;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+    }
+    
+    .form-control:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        outline: none;
+    }
+    
+    .payment-methods {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+    
+    .payment-method {
+        border: 2px solid #e2e8f0;
+        border-radius: 10px;
+        padding: 1rem;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        background: white;
+    }
+    
+    .payment-method:hover {
+        border-color: var(--primary-color);
+        transform: translateY(-2px);
+    }
+    
+    .payment-method.selected {
+        border-color: var(--primary-color);
+        background: #f0f9ff;
+    }
+    
+    .payment-method i {
+        font-size: 2rem;
+        color: var(--primary-color);
+        margin-bottom: 0.5rem;
+        display: block;
+    }
+    
+    .order-summary {
+        background: #f8fafc;
+        border-radius: 10px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+    }
+    
+    .order-summary h4 {
+        color: var(--dark-color);
+        margin-bottom: 1rem;
+        border-bottom: 2px solid #e2e8f0;
+        padding-bottom: 0.5rem;
+    }
+    
+    .summary-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 0.75rem;
+        padding: 0.5rem 0;
+    }
+    
+    .summary-row.total {
+        border-top: 2px solid #e2e8f0;
+        padding-top: 1rem;
+        margin-top: 1rem;
+        font-weight: bold;
+        font-size: 1.2rem;
+        color: var(--success-color);
+    }
+    
+    .btn-checkout {
+        width: 100%;
+        padding: 1.5rem;
+        border-radius: 10px;
+        font-weight: 600;
+        font-size: 1.2rem;
+        background: linear-gradient(135deg, var(--success-color), #34d399);
+        border: none;
+        color: white;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-checkout:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(16, 185, 129, 0.3);
+    }
+    
+    .btn-checkout:disabled {
+        background: #9ca3af;
+        cursor: not-allowed;
+        transform: none;
+        box-shadow: none;
+    }
+    
+    .security-notice {
+        background: #fef3c7;
+        border: 1px solid #f59e0b;
+        border-radius: 10px;
+        padding: 1rem;
+        margin-top: 1.5rem;
+        text-align: center;
+        color: #92400e;
+    }
+    
+    .security-notice i {
+        margin-right: 0.5rem;
+    }
+    
+    @media (max-width: 768px) {
+        .event-details-grid {
+            grid-template-columns: 1fr;
         }
         
         .form-row {
-            display: flex;
-            gap: 15px;
-        }
-        
-        .form-row .form-group {
-            flex: 1;
+            grid-template-columns: 1fr;
         }
         
         .payment-methods {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 20px;
+            grid-template-columns: repeat(2, 1fr);
         }
-        
-        .payment-method {
-            flex: 1;
-            text-align: center;
-            padding: 15px;
-            border: 1px solid #ced4da;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        
-        .payment-method:hover {
-            border-color: #007bff;
-            background-color: #f8f9fa;
-        }
-        
-        .payment-method.selected {
-            border-color: #007bff;
-            background-color: #e3f2fd;
-        }
-        
-        .payment-method input {
-            margin-right: 5px;
-        }
-        
-        .total-amount {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px;
-            background-color: #e3f2fd;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            font-size: 18px;
-            font-weight: bold;
-        }
-        
-        .total-amount span {
-            color: #007bff;
-        }
-        
-        .btn {
-            display: inline-block;
-            padding: 12px 24px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 16px;
-            font-weight: 500;
-            text-align: center;
-            transition: background-color 0.2s;
-            text-decoration: none;
-        }
-        
-        .btn:hover {
-            background-color: #0056b3;
-        }
-        
-        .btn-block {
-            display: block;
-            width: 100%;
-        }
-        
-        .btn-secondary {
-            background-color: #6c757d;
-        }
-        
-        .btn-secondary:hover {
-            background-color: #545b62;
-        }
-        
-        .actions {
-            display: flex;
-            gap: 15px;
-            margin-top: 20px;
-        }
-        
-        .actions .btn {
-            flex: 1;
-        }
-        
-        @media (max-width: 768px) {
-            .form-row {
-                flex-direction: column;
-                gap: 0;
-            }
-            
-            .actions {
-                flex-direction: column;
-            }
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <div class="page-header">
-            <h1>Checkout</h1>
-            <p>Complete your booking for {{ ticket.seat.row.event.name }}</p>
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="checkout-container">
+    <div class="checkout-content">
+        <!-- Header -->
+        <div class="checkout-header">
+            <h1><i class="fas fa-credit-card me-3"></i>Complete Your Purchase</h1>
+            <p>You're almost there! Review your order and complete the checkout process.</p>
         </div>
-        
-        <div class="event-info">
-            <h2>Event Details</h2>
-            <div class="event-details">
-                <div class="event-detail-item">{{ ticket.seat.row.event.date }}</div>
-                <div class="event-detail-item">{{ ticket.seat.row.event.location }}</div>
+
+        <!-- Event Information -->
+        <div class="event-info-card">
+            <h2><i class="fas fa-calendar-alt me-2"></i>Event Details</h2>
+            <div class="event-details-grid">
+                <div class="event-detail-item">
+                    <i class="fas fa-calendar me-2"></i>
+                    {{ ticket.seat.row.event.date|date:"M d, Y" }}
+                </div>
+                <div class="event-detail-item">
+                    <i class="fas fa-clock me-2"></i>
+                    {{ ticket.seat.row.event.date|date:"g:i A" }}
+                </div>
+                <div class="event-detail-item">
+                    <i class="fas fa-map-marker-alt me-2"></i>
+                    {{ ticket.seat.row.event.location }}
+                </div>
+                <div class="event-detail-item">
+                    <i class="fas fa-tag me-2"></i>
+                    {{ ticket.seat.row.event.category|default:"Event" }}
+                </div>
             </div>
-            <p>{{ ticket.seat.row.event.description }}</p>
+            <h3>{{ ticket.seat.row.event.name }}</h3>
+            <p class="text-muted">{{ ticket.seat.row.event.description }}</p>
         </div>
-        
-        <div class="ticket-info">
-            <h2>Ticket Information</h2>
-            <div class="ticket-details">
+
+        <!-- Ticket Information -->
+        <div class="ticket-info-card">
+            <h2><i class="fas fa-ticket-alt me-2"></i>Ticket Details</h2>
+            <div class="ticket-details-row">
                 <div>
-                    <h3>{{ ticket.seat.row.name }} - Seat {{ ticket.seat.number }}</h3>
-                    <p>Section: {{ ticket.seat.row.event.name }}</p>
+                    <h3>Seat {{ ticket.seat.seat_number }}</h3>
+                    <p class="text-muted mb-0">Row {{ ticket.seat.row.row_name }}</p>
                 </div>
-                <div class="ticket-price">${{ ticket.price }}</div>
+                <div class="ticket-price">
+                    ${{ ticket.price }}
+                </div>
             </div>
         </div>
-        
-        <form method="post" class="checkout-form">
-            {% csrf_token %}
-            <h2>Payment Information</h2>
+
+        <!-- Checkout Form -->
+        <div class="checkout-form-card">
+            <h2><i class="fas fa-user me-2"></i>Personal Information</h2>
             
-            <div class="payment-methods">
-                <div class="payment-method selected">
-                    <input type="radio" name="payment_method" value="credit_card" id="credit_card" checked>
-                    <label for="credit_card">Credit Card</label>
+            <form method="post" id="checkoutForm">
+                {% csrf_token %}
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="first_name" class="form-label">First Name *</label>
+                        <input type="text" class="form-control" id="first_name" name="first_name" 
+                               value="{{ form.first_name.value|default:'' }}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="last_name" class="form-label">Last Name *</label>
+                        <input type="text" class="form-control" id="last_name" name="last_name" 
+                               value="{{ form.last_name.value|default:'' }}" required>
+                    </div>
                 </div>
-                <div class="payment-method">
-                    <input type="radio" name="payment_method" value="paypal" id="paypal">
-                    <label for="paypal">PayPal</label>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="email" class="form-label">Email Address *</label>
+                        <input type="email" class="form-control" id="email" name="email" 
+                               value="{{ form.email.value|default:'' }}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="phone" class="form-label">Phone Number</label>
+                        <input type="tel" class="form-control" id="phone" name="phone" 
+                               value="{{ form.phone.value|default:'' }}">
+                    </div>
                 </div>
-                <div class="payment-method">
-                    <input type="radio" name="payment_method" value="bank_transfer" id="bank_transfer">
-                    <label for="bank_transfer">Bank Transfer</label>
-                </div>
-            </div>
-            
-            <div class="form-group">
-                <label for="card_number">Card Number</label>
-                <input type="text" id="card_number" name="card_number" placeholder="1234 5678 9012 3456" required>
-            </div>
-            
-            <div class="form-row">
+                
                 <div class="form-group">
-                    <label for="expiry_date">Expiry Date</label>
-                    <input type="text" id="expiry_date" name="expiry_date" placeholder="MM/YY" required>
+                    <label for="address" class="form-label">Billing Address</label>
+                    <textarea class="form-control" id="address" name="address" rows="3" 
+                              placeholder="Enter your billing address">{{ form.address.value|default:'' }}</textarea>
                 </div>
+                
+                <!-- Payment Methods -->
+                <h4 class="mt-4 mb-3"><i class="fas fa-credit-card me-2"></i>Payment Method</h4>
+                <div class="payment-methods">
+                    <div class="payment-method" onclick="selectPaymentMethod('credit')">
+                        <i class="fas fa-credit-card"></i>
+                        <div>Credit Card</div>
+                    </div>
+                    <div class="payment-method" onclick="selectPaymentMethod('debit')">
+                        <i class="fas fa-credit-card"></i>
+                        <div>Debit Card</div>
+                    </div>
+                    <div class="payment-method" onclick="selectPaymentMethod('paypal')">
+                        <i class="fab fa-paypal"></i>
+                        <div>PayPal</div>
+                    </div>
+                    <div class="payment-method" onclick="selectPaymentMethod('bank')">
+                        <i class="fas fa-university"></i>
+                        <div>Bank Transfer</div>
+                    </div>
+                </div>
+                
+                <!-- Order Summary -->
+                <div class="order-summary">
+                    <h4><i class="fas fa-receipt me-2"></i>Order Summary</h4>
+                    <div class="summary-row">
+                        <span>Ticket Price:</span>
+                        <span>${{ ticket.price }}</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>Service Fee:</span>
+                        <span>$2.50</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>Tax:</span>
+                        <span>${{ ticket.price|floatformat:2|add:"0.00"|multiply:0.08 }}</span>
+                    </div>
+                    <div class="summary-row total">
+                        <span>Total:</span>
+                        <span>${{ ticket.price|floatformat:2|add:"2.50"|add:"0.00"|multiply:0.08|add:"0.00" }}</span>
+                    </div>
+                </div>
+                
+                <!-- Terms and Conditions -->
                 <div class="form-group">
-                    <label for="cvv">CVV</label>
-                    <input type="text" id="cvv" name="cvv" placeholder="123" required>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="terms" name="terms" required>
+                        <label class="form-check-label" for="terms">
+                            I agree to the <a href="#" class="text-decoration-none">Terms and Conditions</a> and 
+                            <a href="#" class="text-decoration-none">Privacy Policy</a>
+                        </label>
+                    </div>
                 </div>
-            </div>
+                
+                <button type="submit" class="btn-checkout" id="checkoutBtn">
+                    <i class="fas fa-lock me-2"></i>Complete Purchase - ${{ ticket.price|floatformat:2|add:"2.50"|add:"0.00"|multiply:0.08|add:"0.00" }}
+                </button>
+            </form>
             
-            <div class="form-group">
-                <label for="cardholder_name">Cardholder Name</label>
-                <input type="text" id="cardholder_name" name="cardholder_name" placeholder="John Doe" required>
+            <div class="security-notice">
+                <i class="fas fa-shield-alt"></i>
+                <strong>Secure Checkout:</strong> Your payment information is encrypted and secure.
             </div>
-            
-            <div class="total-amount">
-                <div>Total Amount:</div>
-                <div>${{ total_amount }}</div>
-            </div>
-            
-            <div class="actions">
-                <button type="submit" class="btn btn-block">Complete Booking</button>
-                <a href="{% url 'event_detail' ticket.seat.row.event.id %}" class="btn btn-secondary btn-block">Cancel</a>
-            </div>
-        </form>
+        </div>
     </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+let selectedPaymentMethod = 'credit';
+
+function selectPaymentMethod(method) {
+    // Remove selected class from all payment methods
+    document.querySelectorAll('.payment-method').forEach(el => {
+        el.classList.remove('selected');
+    });
     
-    <script>
-        // Payment method selection
-        document.addEventListener('DOMContentLoaded', function() {
-            const paymentMethods = document.querySelectorAll('.payment-method');
-            
-            paymentMethods.forEach(method => {
-                method.addEventListener('click', function() {
-                    paymentMethods.forEach(m => m.classList.remove('selected'));
-                    this.classList.add('selected');
-                    
-                    // Update the radio button
-                    const radio = this.querySelector('input[type="radio"]');
-                    radio.checked = true;
-                });
-            });
-            
-            // Form submission
-            const checkoutForm = document.querySelector('.checkout-form');
-            checkoutForm.addEventListener('submit', function(e) {
-                // In a real app, you would process the payment here
-                // For now, we'll just show a confirmation message
-                alert('Booking completed successfully!');
-            });
+    // Add selected class to clicked method
+    event.currentTarget.classList.add('selected');
+    selectedPaymentMethod = method;
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('checkoutForm');
+    const checkoutBtn = document.getElementById('checkoutBtn');
+    
+    // Set default payment method
+    document.querySelector('.payment-method').classList.add('selected');
+    
+    // Form validation
+    form.addEventListener('submit', function(e) {
+        const requiredFields = form.querySelectorAll('[required]');
+        let isValid = true;
+        
+        requiredFields.forEach(field => {
+            if (!field.value.trim()) {
+                field.classList.add('is-invalid');
+                isValid = false;
+            } else {
+                field.classList.remove('is-invalid');
+            }
         });
-    </script>
-</body>
-</html>
+        
+        if (!isValid) {
+            e.preventDefault();
+            alert('Please fill in all required fields.');
+            return;
+        }
+        
+        // Disable button and show loading state
+        checkoutBtn.disabled = true;
+        checkoutBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Processing...';
+        
+        // Simulate processing delay
+        setTimeout(() => {
+            // Form will submit normally
+        }, 1000);
+    });
+    
+    // Real-time validation
+    const inputs = form.querySelectorAll('input, textarea');
+    inputs.forEach(input => {
+        input.addEventListener('blur', function() {
+            if (this.hasAttribute('required') && !this.value.trim()) {
+                this.classList.add('is-invalid');
+            } else {
+                this.classList.remove('is-invalid');
+            }
+        });
+        
+        input.addEventListener('input', function() {
+            if (this.classList.contains('is-invalid')) {
+                this.classList.remove('is-invalid');
+            }
+        });
+    });
+});
+</script>
+{% endblock %}

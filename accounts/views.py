@@ -99,7 +99,7 @@ You requested a password reset for your SeatScape account.
 Click the link below to reset your password:
 {reset_url}
 
-⚠️  IMPORTANT: This link will expire in 1 minute for security reasons.
+⚠️  IMPORTANT: This link will expire in 2 minute for security reasons.
 
 If you didn't request this password reset, please ignore this email.
 
@@ -142,9 +142,9 @@ def reset_password(request, uidb64, token):
         
         # Check if token is valid and not expired
         if default_token_generator.check_token(user, token):
-            # Check if token is expired (1 minute)
+            # Check if token is expired (2 minute)
             from django.conf import settings
-            timeout_seconds = getattr(settings, 'PASSWORD_RESET_TIMEOUT', 60)
+            timeout_seconds = getattr(settings, 'PASSWORD_RESET_TIMEOUT', 120)
             
             # Get the time when the token was created (we'll use a simple approach)
             # In production, you might want to store token creation time in database
