@@ -13,7 +13,6 @@ from django.conf import settings
 # import requests
 import json
 
-@login_required(login_url='login')
 def HomePage(request):
     return render(request, 'home.html')
 
@@ -74,6 +73,55 @@ def AuthPage(request):
     
     return render(request, 'auth.html', context)
 
+def login_view(request):
+    if request.user.is_authenticated:
+        return redirect('home')
+    next_url = request.POST.get('next') or request.GET.get('next')
+    if request.method == 'POST':
+        identifier = (request.POST.get('username') or '').strip()
+        password = request.POST.get('password') or ''
+        # Try username first
+        user = authenticate(request, username=identifier, password=password)
+        # If that fails, try treating the identifier as an email
+        if user is None and '@' in identifier:
+            try:
+                email_user = User.objects.get(email__iexact=identifier)
+                user = authenticate(request, username=email_user.username, password=password)
+            except User.DoesNotExist:
+                user = None
+        if user is not None:
+            login(request, user)
+            return redirect(next_url or 'home')
+        messages.error(request, 'Invalid username or password.')
+    return render(request, 'login.html')
+
+def signup_view(request):
+    if request.user.is_authenticated:
+        return redirect('home')
+    next_url = request.POST.get('next') or request.GET.get('next')
+    if request.method == 'POST':
+        uname = (request.POST.get('username') or '').strip()
+        email = (request.POST.get('email') or '').strip()
+        pass1 = request.POST.get('password1') or ''
+        pass2 = request.POST.get('password2') or ''
+        if not uname or not pass1:
+            messages.error(request, 'Username and password are required.')
+        elif pass1 != pass2:
+            messages.error(request, 'Passwords do not match.')
+        elif User.objects.filter(username=uname).exists():
+            messages.error(request, 'Username already exists.')
+        elif User.objects.filter(email=email).exists():
+            messages.error(request, 'Email already exists. Try logging in.')
+        else:
+            try:
+                user = User.objects.create_user(uname, email, pass1)
+                login(request, user)
+                messages.success(request, f'Account created! Welcome, {uname}!')
+                return redirect(next_url or 'home')
+            except Exception:
+                messages.error(request, 'Error creating account. Please try again.')
+    return render(request, 'signup.html')
+
 def forget_password(request):
     if request.method == 'POST':
         email = request.POST.get('email')
@@ -128,6 +176,9 @@ SeatScape Team
             messages.error(request, 'Please enter your email address.')
     
     return render(request, 'forget_password.html')
+
+def about(request):
+    return render(request, 'about.html')
 
 def reset_password(request, uidb64, token):
     try:

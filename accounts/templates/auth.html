@@ -1,198 +1,9 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <title>Auth</title>
+{% extends 'base.html' %}
+{% comment %} {% block title %}SeatScape - Login / Sign Up{% endblock %} {% endcomment %}
+{% block content %}
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;600&display=swap" rel="stylesheet">
-    <style>
-        *,
-        *:before,
-        *:after{
-            padding: 0;
-            margin: 0;
-            box-sizing: border-box;
-        }
-        body { 
-            background:#080710; 
-            font-family: Arial, sans-serif; 
-            color:#fff; 
-        }
-        .container {
-            width: 440px; 
-            margin: 60px auto; 
-            background-color: rgba(255,255,255,0.13);
-            border-radius: 10px; 
-            border: 2px solid rgba(255,255,255,0.1); 
-            padding: 24px 24px 32px;
-            box-shadow: 0 0 40px rgba(8,7,16,0.6);
-        }
-        h2 { 
-            text-align:center; 
-            margin: 0 0 16px; 
-            font-weight: 600; 
-        }
-        .tabs { 
-            display:flex; 
-            border-bottom: 1px solid rgba(255,255,255,0.25); 
-            margin-bottom:16px; 
-        }
-        .tab { 
-            flex:1; 
-            text-align:center; 
-            padding:10px; 
-            cursor:pointer; 
-            transition: all 0.3s ease;
-        }
-        .tab:hover {
-            background: rgba(255,255,255,0.1);
-        }
-        .tab.active { 
-            border-bottom: 2px solid #fff; 
-            font-weight: bold; 
-        }
-        label { 
-            display:block; 
-            margin-top:16px; 
-            font-size:14px; 
-        }
-        input { 
-            width:100%; 
-            height:44px; 
-            margin-top:6px; 
-            padding:0 10px; 
-            border-radius:4px;
-            border:none; 
-            background-color: rgba(255,255,255,0.07); 
-            color:#fff; 
-            transition: all 0.3s ease;
-        }
-        input:focus {
-            background-color: rgba(255,255,255,0.1);
-            outline: none;
-            box-shadow: 0 0 0 2px rgba(255,255,255,0.3);
-        }
-        button { 
-            margin-top:18px; 
-            width:100%; 
-            height:46px; 
-            background:#fff; 
-            color:#080710; 
-            border:none; 
-            border-radius:5px; 
-            font-weight:600; 
-            cursor:pointer; 
-            transition: all 0.3s ease;
-        }
-        button:hover {
-            background: #f0f0f0;
-            transform: translateY(-2px);
-        }
-        .messages { 
-            margin: 8px 0; 
-        }
-        .messages li { 
-            list-style:none; 
-            padding: 8px 10px; 
-            background: rgba(255,255,255,0.15); 
-            border-radius: 6px; 
-            margin-bottom: 6px; 
-            border-left: 4px solid #ff6b6b;
-        }
-        .messages li.success {
-            border-left-color: #51cf66;
-            background: rgba(81, 207, 102, 0.2);
-        }
-        .hidden { 
-            display:none; 
-        }
-        a { 
-            color: #a6d4ff; 
-            text-decoration: none;
-            transition: color 0.3s ease;
-        }
-        a:hover {
-            color: #fff;
-            text-decoration: underline;
-        }
-        .forget-password {
-            text-align: center;
-            margin-top: 10px;
-        }
-        .forget-password a {
-            font-size: 12px;
-            color: #ccc;
-        }
-        .forget-password a:hover {
-            color: #a6d4ff;
-        }
-        .background{
-            width: 430px;
-            height: 550px;
-            position: absolute;
-            transform: translate(-50%,-50%);
-            left: 50%;
-            top: 50%;
-            z-index: -1;
-        }
-        .background .shape{
-            height: 200px;
-            width: 200px;
-            position: absolute;
-            border-radius: 50%;
-        }
-        .shape:first-child{
-            background: linear-gradient(
-                #1845ad,
-                #23a2f6
-            );
-            left: -80px;
-            top: -80px;
-        }
-        .shape:last-child{
-            background: linear-gradient(
-                to right,
-                #ff512f,
-                #f09819
-            );
-            right: -30px;
-            bottom: -80px;
-        }
-        .social-login {
-            margin-top: 20px;
-            text-align: center;
-        }
-        .social-btn {
-            display: inline-block;
-            width: 100%;
-            padding: 12px;
-            margin: 5px 0;
-            border: 1px solid rgba(255,255,255,0.3);
-            border-radius: 5px;
-            background: rgba(255,255,255,0.1);
-            color: white;
-            text-decoration: none;
-            transition: all 0.3s ease;
-        }
-        .social-btn:hover {
-            background: rgba(255,255,255,0.2);
-            color: white;
-            text-decoration: none;
-        }
-        .social-btn.google {
-            background: #db4437;
-            border-color: #db4437;
-        }
-        .social-btn.google:hover {
-            background: #c23321;
-        }
-    </style>
-</head>
-<body>
-    <div class="background">
-        <div class="shape"></div>
-        <div class="shape"></div>
-    </div>
     
     <div class="container">
         <h2>Welcome</h2>
@@ -216,7 +27,7 @@
             <div class="tab active" id="tab-login">Login</div>
             <div class="tab" id="tab-signup">Sign Up</div>
         </div>
-        
+        {% comment %} 
         <!-- Login Form -->
         <form id="form-login" method="post">
             {% csrf_token %}
@@ -240,7 +51,89 @@
             <p style="text-align: center; margin-top: 16px;">
                 No account? <a href="#" onclick="activate('signup'); return false;">Sign Up</a>
             </p>
-        </form>
+        </form> {% endcomment %}
+
+    <!-- ==========Sign-In-Section========== -->
+    <section class="account-section bg_img" data-background="./assets/images/account/account-bg.jpg">
+        <div class="container">
+            <div class="padding-top padding-bottom">
+                <div class="account-area">
+                    <div class="section-header-3">
+                        <span class="cate">welcome</span>
+                        <h2 class="title">to Boleto </h2>
+                    </div>
+                    <form id="form-login" method="post" class="account-form">
+                        {% csrf_token %}
+                        <input type="hidden" name="action" value="login">
+                        {% if request.GET.next %}
+                        <input type="hidden" name="next" value="{{ request.GET.next }}">
+                        {% endif %}
+                    
+                        <div class="form-group">
+                            <label for="username">Username <span>*</span></label>
+                            <input type="text" placeholder="Enter Username" id="username" name="username" required>
+                        </div>
+                    
+                        <div class="form-group">
+                            <label for="password">Password <span>*</span></label>
+                            <input type="password" placeholder="Password" id="password" name="password" required>
+                        </div>
+                    
+                        <div class="form-group text-center">
+                            <button type="submit" class="btn">Log In</button>
+                        </div>
+                    
+                        <div class="form-group forget-password text-center">
+                            <a href="{% url 'forget_password' %}">Forgot Password?</a>
+                        </div>
+                    
+                        <p style="text-align: center; margin-top: 16px;">
+                            No account? <a href="#" onclick="activate('signup'); return false;">Sign Up</a>
+                        </p>
+                    </form>                    
+                    <div class="option">
+                        Already have an account? <a href="sign-in.html">Login</a>
+                    </div>
+                    <div class="or"><span>Or</span></div>
+                    <ul class="social-icons">
+                        <li>
+                            <a href="#0">
+                                <i class="fab fa-facebook-f"></i>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#0" class="active">
+                                <i class="fab fa-twitter"></i>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#0">
+                                <i class="fab fa-google"></i>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
         
         <!-- Signup Form -->
         <form id="form-signup" method="post" class="hidden">
@@ -276,6 +169,7 @@
                 <i class="fab fa-google"></i> Continue with Google
             </a>
         </div>
+    </div>
     </div>
 
     <script>
@@ -317,5 +211,4 @@
             });
         }, 5000);
     </script>
-</body>
-</html>
+{% endblock %}

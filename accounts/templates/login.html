@@ -74,45 +74,63 @@
       <i class="fas fa-angle-up"></i>
     </a>
 
-<main> 
-    <!-- ==========Sign-In-Section========== -->
-    <section class="account-section bg_img" data-background="https://pixner.net/boleto/demo/assets/images/account/account-bg.jpg">
-        <div class="container">
-            <div class="padding-top padding-bottom">
-                <div class="account-area">
-                    <div class="section-header-3">
-                        <h2 class="cate">Reset Password</h2>
-                        <span class="titlecate">Enter your new password below.</span>
-                    </div>
-                    {% if messages %}
-                    <div class="messages">
-                        {% for message in messages %}
-                        <div class="alert alert-{{ message.tags }}" style="color: #f1481f;">{{ message }}</div>
-                        {% endfor %}
-                    </div>
-                    {% endif %}
-                    <form class="account-form" id="form-signup" method="post">
-                        {% csrf_token %}
-                        <div class="form-group">
-                            <label for="password1">New Password</label>
-                            <input type="password" placeholder="Enter new password" id="password1" name="password1" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="password2">Confirm Password<span>*</span></label>
-                            <input type="password" placeholder="Confirm new Password" id="password2" name="password2" required>
-                        </div>
-                        <div class="form-group text-center">
-                            <input type="submit" value="Reset Password">
-                        </div>
-                    </form>
-                    <div class="option">
-                        <a href="{% url 'login' %}">← Back to Login</a>
-                    </div>
+<main>
+
+<!-- ==========Sign-In-Section========== -->
+<section class="account-section bg_img" data-background="https://pixner.net/boleto/demo/assets/images/account/account-bg.jpg">
+    <div class="container">
+        <div class="padding-top padding-bottom">
+            <div class="account-area">
+                <div class="section-header-3">
+                    <span class="cate">hello</span>
+                    <h2 class="title">welcome back</h2>
                 </div>
+                {% if messages %}
+                <div class="messages">
+                    {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+                <form class="account-form" method="post" id="form-login">
+                    {% csrf_token %}
+                    {% if request.GET.next %}
+                    <input type="hidden" name="next" value="{{ request.GET.next }}">
+                    {% endif %}
+                    <div class="form-group">
+                        <label for="username">Email<span>*</span></label>
+                        <input type="email" placeholder="Enter Your Email" id="email2" name="username" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password<span>*</span></label>
+                        <input type="password" placeholder="Password" id="password" name="password" required>
+                    </div>
+                    <div class="form-group checkgroup">
+                        <input type="checkbox" id="bal2" required checked>
+                        <label for="bal2">remember password</label>
+                        <a href="{% url 'forget_password' %}" class="forget-pass">Forget Password</a>
+                    </div>
+                    <div class="form-group text-center">
+                        <input type="submit" value="log in">
+                    </div>
+                </form>
+                <div class="option">
+                    New to SeatScape? <a href="{% url 'signup' %}">Create an account</a>
+                </div>
+                <div class="or"><span>Or</span></div>
+                <ul class="social-icons">
+                    <li>
+                        <a href="#0">
+                            <i class="fab fa-google"></i>
+                        </a>
+                    </li>
+                </ul>
             </div>
         </div>
-    </section>
-    <!-- ==========Sign-In-Section========== -->
+    </div>
+</section>
+<!-- ==========Sign-In-Section========== -->
+
 
 </main>
 

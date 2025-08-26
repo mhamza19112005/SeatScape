@@ -1,7 +1,6 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Booking Confirmation - {{ payment.tickets.first.seat.row.event.name }}</title>
+{% extends 'base.html' %}
+{% block title %}Booking Confirmation - {{ payment.tickets.first.seat.row.event.name }}{% endblock %}
+{% block content %}
     <style>
         * {
             box-sizing: border-box;
@@ -198,8 +197,6 @@
             }
         }
     </style>
-</head>
-<body>
     <div class="container">
         <div class="page-header">
             <h1>Booking Confirmation</h1>
@@ -254,7 +251,7 @@
             <a href="{% url 'event_detail' payment.tickets.first.seat.row.event.id %}" class="btn btn-secondary">Event Details</a>
         </div>
     </div>
-    
+
     <script>
         // Print functionality
         document.addEventListener('DOMContentLoaded', function() {
@@ -264,5 +261,4 @@
             });
         });
     </script>
-</body>
-</html>
+{% endblock %}

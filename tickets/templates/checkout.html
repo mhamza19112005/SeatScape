@@ -1,7 +1,6 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Checkout - {{ ticket.seat.row.event.name }}</title>
+{% extends 'base.html' %}
+{% block title %}Checkout - {{ ticket.seat.row.event.name }}{% endblock %}
+{% block content %}
     <style>
         * {
             box-sizing: border-box;
@@ -234,8 +233,6 @@
             }
         }
     </style>
-</head>
-<body>
     <div class="container">
         <div class="page-header">
             <h1>Checkout</h1>
@@ -313,7 +310,7 @@
             </div>
         </form>
     </div>
-    
+
     <script>
         // Payment method selection
         document.addEventListener('DOMContentLoaded', function() {
@@ -339,5 +336,4 @@
             });
         });
     </script>
-</body>
-</html>
+{% endblock %}
