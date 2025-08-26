@@ -18,6 +18,7 @@ from django.contrib import admin
 from django.urls import include, path
 from django.conf import settings
 from django.conf.urls.static import static
+from tickets import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -27,6 +28,9 @@ urlpatterns = [
     # path('payments/', include('payments.urls')),
     # path('reports/', include('reports.urls'))
     path('contact/', include('contactus.urls')), 
+    # path('checkout/<int:event_id>/', views.checkout_view, name='checkout'),
+    path('checkout/<int:ticket_id>/', views.checkout, name='checkout'),
+    # path('checkout/<int:event_id>/', views.checkout_view, name='checkout'),
 ]
 
 if settings.DEBUG:

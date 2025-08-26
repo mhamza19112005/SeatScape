@@ -23,6 +23,7 @@
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
       .footer-section::before {
@@ -57,7 +58,6 @@
       @media (min-width: 992px) {
         a.avatar-dropdown { display: flex; align-items: center; gap: 5px; }
       }
-      {% block extra_css %}{% endblock %}
     </style>
   </head>
   <body>
@@ -100,22 +100,20 @@
               <a href="{% url 'about' %}">About Us</a>
             </li>
             <li>
-              <a href="#">blog</a>
+              <a href="{% url 'event_list' %}">Events</a>
             </li>
             <li>
               <a href="{% url 'contact' %}">contact</a>
             </li>
             {% if user.is_authenticated %}
-            <li>
-              <a href="#">
+            <li class="user-profile">
+              <a href="#" class="profile-toggle">
                 <div class="user-avatar">{{ user.username|slice:":1"|upper }}</div>
                 <span>{{ user.username }}</span>
               </a>
-              <ul class="submenu">
-                <li>
-                  <a class="avatar-dropdown" href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i>logout</a>
-                </li>
-              </ul>
+              <div class="profile-dropdown">
+                <a href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i> Logout</a>
+              </div>
             </li>
             {% else %}
             <li class="header-button pr-0">
@@ -160,11 +158,11 @@
             </a>
           </div>
           <ul class="social-icons">
-            <li><a href="#0"><i class="fab fa-facebook-f"></i></a></li>
-            <li><a href="#0"><i class="fab fa-twitter"></i></a></li>
-            <li><a href="#0"><i class="fab fa-pinterest-p"></i></a></li>
-            <li><a href="#0"><i class="fab fa-google"></i></a></li>
-            <li><a href="#0"><i class="fab fa-instagram"></i></a></li>
+            <li><a href="https://facebook.com" target="_blank"><i class="fab fa-facebook-f"></i></a></li>
+            <li><a href="https://twitter.com" target="_blank"><i class="fab fa-twitter"></i></a></li>
+            <li><a href="https://pinterest.com" target="_blank"><i class="fab fa-pinterest-p"></i></a></li>
+            <li><a href="https://google.com" target="_blank"><i class="fab fa-google"></i></a></li>
+            <li><a href="https://instagram.com" target="_blank"><i class="fab fa-instagram"></i></a></li>
           </ul>
         </div>
         <div class="footer-bottom">

@@ -281,8 +281,8 @@
                             <div class="col-sm-6 col-lg-4">
                                 <div class="event-grid">
                                     <div class="movie-thumb c-thumb">
-                                        <a href="event-details.html">
-                                            <img src="https://pixner.net/boleto/demo/assets/images/event/event01.jpg" alt="event">
+                                        <a href="{% url 'event_detail' event.id %}">
+                                            <img src="{{ event.image_url }}" alt="{{ event.name }}">
                                         </a>
                                         <div class="event-date">
                                             <h6 class="date-title">{{ event.date|date:"d" }}</h6>

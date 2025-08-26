@@ -38,7 +38,7 @@ DEFAULT_FROM_EMAIL = 'mhamza19112005@gmail.com'
 CONTACT_RECEIVER_EMAIL = 'mhamza19112005@gmail.com'
 
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'testserver', '*']
 
 
 # Application definition
@@ -150,3 +150,21 @@ PASSWORD_RESET_TIMEOUT = 120  # 60 seconds = 1 minute
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Checkout System Settings
+SESSION_COOKIE_AGE = 300  # 5 minutes for checkout sessions
+CSRF_COOKIE_SECURE = False  # Set to True in production with HTTPS
+SESSION_COOKIE_SECURE = False  # Set to True in production with HTTPS
+
+# Tax Configuration
+TAX_RATE = 0.15  # 15% tax rate
+
+# Payment Settings
+PAYMENT_METHODS = {
+    'credit_card': 'Credit Card',
+    'debit_card': 'Debit Card',
+    'paypal': 'PayPal'
+}
+
+# Coupon Settings
+COUPON_EXPIRY_WARNING_DAYS = 7  # Warn users when coupon expires soon

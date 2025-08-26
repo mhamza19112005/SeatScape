@@ -1,6 +1,6 @@
-<!-- {% extends 'base.html' %} -->
-<!-- {% block title %}{{ event.name }} - Seat Selection{% endblock %} -->
-<!-- {% block content %} -->
+{% extends 'base.html' %}
+{% block title %}{{ event.name }} - Seat Selection{% endblock %}
+{% block content %}
     <style>
         /* CSS styles for layout and interactivity */
         * {
@@ -832,4 +832,4 @@
             window.location.href = `/checkout/${ticketId}/`;
         }
     </script>
-<!-- {% endblock %} -->
+{% endblock %}
