@@ -6,6 +6,9 @@ class Event(models.Model):
     date = models.DateTimeField()
     location = models.CharField(max_length=255)
     description = models.TextField(blank=True, null=True)
+    # Optional image upload or external image URL
+    image = models.ImageField(upload_to='events/', blank=True, null=True)
+    image_url = models.URLField(blank=True, null=True)
 
     def __str__(self):
         return self.name

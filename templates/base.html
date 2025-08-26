@@ -87,14 +87,14 @@
               <a href="{% url 'home' %}" class="{% block nav_home_active %}{% endblock %}">Home</a>
             </li>
             <li>
-              <a href="#">events</a>
-              <ul class="submenu">
+              <a href="{% url 'event_list' %}">events</a>
+              {% comment %} <ul class="submenu">
                 <li><a href="#">Events</a></li>
                 <li><a href="#">Event Details</a></li>
                 <li><a href="#">Event Speaker</a></li>
                 <li><a href="#">Event Ticket</a></li>
                 <li><a href="#">Event Checkout</a></li>
-              </ul>
+              </ul> {% endcomment %}
             </li>
             <li>
               <a href="{% url 'about' %}">About Us</a>

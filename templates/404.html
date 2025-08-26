@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% block title %}SeatScape - Page Not Found{% endblock %}
+{% block content %}
+<section class="main-page-header speaker-banner bg_img" data-background="https://pixner.net/boleto/demo/assets/images/banner/banner07.jpg">
+  <div class="container">
+    <div class="speaker-banner-content">
+      <h2 class="title">404 - Page not found</h2>
+      <ul class="breadcrumb">
+        <li><a href="{% url 'home' %}"> Home </a></li>
+        <li>404</li>
+      </ul>
+    </div>
+  </div>
+  </section>
+
+<section class="padding-top padding-bottom">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-lg-8 text-center">
+        <h3 class="title mb-3">Oops! We can’t find that page.</h3>
+        <p class="mb-4">The link might be broken or the page may have been removed.</p>
+        <a href="{% url 'home' %}" class="btn">Back to Home</a>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+
