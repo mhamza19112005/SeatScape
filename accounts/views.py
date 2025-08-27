@@ -4,6 +4,11 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.contrib.auth.forms import PasswordResetForm
+try:
+    from tickets.models import Event, Category
+except Exception:
+    Event = None
+    Category = None
 from django.contrib.auth.tokens import default_token_generator
 from django.utils.http import urlsafe_base64_encode
 from django.utils.encoding import force_bytes
@@ -14,7 +19,24 @@ from django.conf import settings
 import json
 
 def HomePage(request):
-    return render(request, 'home.html')
+    context = {}
+    if Event:
+        try:
+            events_qs = Event.objects.order_by('-date')[:8]
+            context['featured_events'] = events_qs
+        except Exception:
+            context['featured_events'] = []
+    if Category:
+        try:
+            cats = list(Category.objects.all())
+            categories_with_events = []
+            for c in cats:
+                evs = list(Event.objects.filter(categories=c).order_by('-date')[:8])
+                categories_with_events.append((c, evs))
+            context['categories_with_events'] = categories_with_events
+        except Exception:
+            context['categories_with_events'] = []
+    return render(request, 'home.html', context)
 
 def AuthPage(request):
     if request.user.is_authenticated:
