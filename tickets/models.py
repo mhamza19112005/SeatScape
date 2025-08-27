@@ -1,6 +1,13 @@
 from django.db import models
 from django.contrib.auth.models import User
 
+class Category(models.Model):
+    name = models.CharField(max_length=100, unique=True)
+    slug = models.SlugField(max_length=120, unique=True, blank=True, null=True)
+
+    def __str__(self):
+        return self.name
+
 class Event(models.Model):
     name = models.CharField(max_length=200)
     date = models.DateTimeField()
@@ -9,6 +16,7 @@ class Event(models.Model):
     # Optional image upload or external image URL
     image = models.ImageField(upload_to='events/', blank=True, null=True)
     image_url = models.URLField(blank=True, null=True)
+    categories = models.ManyToManyField('Category', blank=True, related_name='events')
 
     def __str__(self):
         return self.name

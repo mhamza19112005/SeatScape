@@ -4,7 +4,7 @@
 {% block title %}Checkout - {{ event.name }}{% endblock %}
 
 {% block extra_css %}
-<style>
+    <style>
     .checkout-container {
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         min-height: 100vh;
@@ -57,13 +57,13 @@
         font-size: 16px;
         transition: all 0.3s ease;
         background: #f8f9fa;
-        color: #2c3e50;
-    }
-    
+            color: #2c3e50;
+        }
+        
     .form-control:focus {
         border-color: #3498db;
         box-shadow: 0 0 0 0.3rem rgba(52,152,219,0.15);
-        background: white;
+            background: white;
         outline: none;
     }
     
@@ -87,7 +87,7 @@
     .payment-option a {
         display: flex;
         align-items: center;
-        padding: 20px;
+            padding: 20px;
         border: 2px solid #e9ecef;
         border-radius: 12px;
         text-decoration: none;
@@ -136,9 +136,9 @@
         align-items: center;
         justify-content: center;
         font-weight: bold;
-        font-size: 14px;
-    }
-    
+            font-size: 14px;
+        }
+        
     .payment-option img {
         width: 45px;
         height: 30px;
@@ -237,7 +237,7 @@
     }
     
     .booking-summary {
-        background: white;
+            background: white;
         border-radius: 15px;
         padding: 30px;
         box-shadow: 0 10px 30px rgba(0,0,0,0.1);
@@ -259,9 +259,9 @@
     }
     
     .summary-item {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         padding: 15px 0;
         border-bottom: 1px solid #ecf0f1;
         transition: all 0.3s ease;
@@ -271,7 +271,7 @@
         background: #f8f9fa;
         padding-left: 10px;
         padding-right: 10px;
-        border-radius: 8px;
+            border-radius: 8px;
     }
     
     .summary-item:last-child {
@@ -325,12 +325,12 @@
     }
     
     .coupon-form {
-        display: flex;
-        gap: 15px;
-    }
-    
+            display: flex;
+            gap: 15px;
+        }
+        
     .coupon-form input {
-        flex: 1;
+            flex: 1;
         border-radius: 25px;
         padding: 12px 20px;
     }
@@ -343,10 +343,10 @@
         border: none;
         color: white;
         font-weight: 600;
-        cursor: pointer;
-        transition: all 0.3s ease;
-    }
-    
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
     .coupon-form button:hover {
         background: linear-gradient(135deg, #c0392b, #a93226);
         transform: translateY(-2px);
@@ -375,7 +375,7 @@
     
     .form-check {
         margin-bottom: 20px;
-        padding: 15px;
+            padding: 15px;
         background: #f8f9fa;
         border-radius: 10px;
         border: 1px solid #e9ecef;
@@ -389,7 +389,7 @@
     .form-check-label {
         font-size: 15px;
         color: #2c3e50;
-        cursor: pointer;
+            cursor: pointer;
     }
     
     .form-check-label .title {
@@ -397,7 +397,7 @@
         color: #2c3e50;
         display: block;
         margin-bottom: 8px;
-        font-size: 16px;
+            font-size: 16px;
     }
     
     .form-check-label .info {
@@ -411,7 +411,7 @@
         color: white;
         padding: 15px 25px;
         border-radius: 30px;
-        text-align: center;
+            text-align: center;
         margin-bottom: 25px;
         box-shadow: 0 5px 15px rgba(231,76,60,0.3);
         animation: pulse 2s infinite;
@@ -463,9 +463,9 @@
         border: 1px solid #2196f3;
         border-radius: 10px;
         padding: 20px;
-        margin-top: 20px;
-    }
-    
+            margin-top: 20px;
+        }
+        
     .security-notice i {
         color: #2196f3;
         margin-right: 10px;
@@ -473,9 +473,9 @@
     
     .security-notice strong {
         color: #1976d2;
-    }
-    
-    @media (max-width: 768px) {
+        }
+        
+        @media (max-width: 768px) {
         .checkout-container {
             padding: 15px 0;
         }
@@ -485,8 +485,8 @@
         }
         
         .coupon-form {
-            flex-direction: column;
-        }
+                flex-direction: column;
+            }
         
         .payment-option {
             grid-template-columns: 1fr;
@@ -508,9 +508,9 @@
         
         .page-header h2 {
             font-size: 1.5rem;
+            }
         }
-    }
-</style>
+    </style>
 {% endblock %}
 
 {% block content %}
@@ -573,8 +573,8 @@
                             {% endif %}
                         </div>
                     </form>
-                </div>
-
+        </div>
+        
                 <!-- Payment Method Selection -->
                 <div class="checkout-widget">
                     <h5><i class="fas fa-credit-card"></i> Payment Method</h5>
@@ -598,7 +598,7 @@
                             </a>
                         </li>
                     </ul>
-                </div>
+            </div>
 
                 <!-- Payment Form -->
                 <div class="checkout-widget">
@@ -609,8 +609,8 @@
                         <!-- Payment method radio buttons (hidden but required for form validation) -->
                         <div style="display: none;">
                             {{ payment_form.payment_method }}
-                        </div>
-                        
+        </div>
+        
                         <!-- Hidden payment method field for JavaScript -->
                         <input type="hidden" name="payment_method" id="paymentMethod" value="credit_card">
                         
@@ -648,16 +648,16 @@
                                             <div class="alert alert-danger">{{ payment_form.cvv.errors.0 }}</div>
                                         {% endif %}
                                     </div>
-                                </div>
-                            </div>
-                        </div>
-
+                </div>
+            </div>
+        </div>
+        
                         <!-- PayPal fields (hidden by default) -->
                         <div id="paypalFields" class="card-fields">
                             <div class="alert alert-info">
                                 <i class="fab fa-paypal"></i> You will be redirected to PayPal to complete your payment.
-                            </div>
-                        </div>
+                </div>
+                </div>
 
                         <div class="form-group">
                             <div class="form-check">
@@ -666,10 +666,10 @@
                                     <span class="title">Save Payment Method</span>
                                     <span class="info">Save this payment information for faster checkout next time.</span>
                                 </label>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
+                </div>
+            </div>
+            
+            <div class="form-group">
                             <div class="form-check">
                                 {{ payment_form.terms_accepted }}
                                 <label class="form-check-label" for="{{ payment_form.terms_accepted.id_for_label }}">
@@ -680,9 +680,9 @@
                             {% if payment_form.terms_accepted.errors %}
                                 <div class="alert alert-danger">{{ payment_form.terms_accepted.errors.0 }}</div>
                             {% endif %}
-                        </div>
-
-                        <div class="form-group">
+            </div>
+            
+                <div class="form-group">
                             <button type="submit" class="custom-button w-100" id="submitBtn">
                                 <i class="fas fa-lock"></i> Complete Payment - $<span id="finalAmount">{{ total_amount|floatformat:2 }}</span>
                             </button>
@@ -710,10 +710,10 @@
                             </h6>
                             <div class="info">
                                 <span>{{ event.date|date:"d M Y, g:i A" }}</span>
-                            </div>
-                        </div>
-                    </div>
-                    
+                </div>
+                </div>
+            </div>
+            
                     <div class="summary-item">
                         <h6 class="subtitle">Ticket Price</h6>
                         <span class="info">${{ ticket.price|floatformat:2 }}</span>
@@ -727,9 +727,9 @@
                     <div class="summary-item" id="discountRow" style="display: none;">
                         <h6 class="subtitle">Discount</h6>
                         <span class="info text-success">-$<span id="discountAmount">0.00</span></span>
-                    </div>
-                    
-                    <div class="total-amount">
+            </div>
+            
+            <div class="total-amount">
                         <h6 class="subtitle">
                             <span>Total Amount</span>
                             <span class="text-primary">$<span id="summaryTotal">{{ total_amount|floatformat:2 }}</span></span>
@@ -746,8 +746,8 @@
                         <button type="submit" class="custom-button">Apply</button>
                     </form>
                     <div id="couponMessage"></div>
-                </div>
-
+            </div>
+            
                 <!-- Security Notice -->
                 <div class="alert alert-info">
                     <i class="fas fa-shield-alt"></i>
@@ -755,9 +755,9 @@
                 </div>
             </div>
         </div>
+            </div>
     </div>
-</div>
-
+    
 <!-- Loading Modal -->
 <div class="modal fade" id="loadingModal" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
@@ -775,7 +775,7 @@
 {% endblock %}
 
 {% block extra_js %}
-<script>
+    <script>
 document.addEventListener('DOMContentLoaded', function() {
     // Initialize variables
     let countdown = 300; // 5 minutes in seconds
@@ -784,14 +784,14 @@ document.addEventListener('DOMContentLoaded', function() {
     // Start countdown
     startCountdown();
     
-    // Payment method selection
+        // Payment method selection
     const paymentMethods = document.querySelectorAll('.payment-option li');
     const cardFields = document.getElementById('cardFields');
     const paypalFields = document.getElementById('paypalFields');
     const paymentMethodInput = document.getElementById('paymentMethod');
-    
-    paymentMethods.forEach(method => {
-        method.addEventListener('click', function() {
+            
+            paymentMethods.forEach(method => {
+                method.addEventListener('click', function() {
             // Remove active class from all methods
             paymentMethods.forEach(m => m.classList.remove('active'));
             // Add active class to clicked method
@@ -857,9 +857,9 @@ document.addEventListener('DOMContentLoaded', function() {
         .finally(() => {
             submitBtn.textContent = originalText;
             submitBtn.disabled = false;
-        });
-    });
-    
+                });
+            });
+            
     // Main form submission
     const mainForm = document.getElementById('paymentForm');
     const contactForm = document.getElementById('contactForm');
@@ -1062,7 +1062,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (countdownInterval) {
             clearInterval(countdownInterval);
         }
-    });
-});
-</script>
+            });
+        });
+    </script>
 {% endblock %}  

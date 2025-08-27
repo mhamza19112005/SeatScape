@@ -4,13 +4,82 @@ from django.http import JsonResponse
 from django.utils import timezone
 from django.contrib.auth.decorators import login_required
 from django.db import transaction
+from django.db import models
 from decimal import Decimal
-from .models import Event, SeatRow, Seat, Ticket, Payment, Coupon
+from .models import Event, SeatRow, Seat, Ticket, Payment, Coupon, Category
+from django.core.paginator import Paginator
+from datetime import datetime
 from .forms import ContactDetailsForm, PaymentForm, CouponForm
 
 def event_list(request):
-    events = Event.objects.all()
-    return render(request, 'event_list.html', {'events': events})
+    qs = Event.objects.all()
+
+    # Filters
+    search_query = (request.GET.get('q') or '').strip()
+    city = (request.GET.get('city') or '').strip()
+    date_str = (request.GET.get('date') or '').strip()
+    sort = (request.GET.get('sort') or 'date_desc').strip()
+    categories = request.GET.getlist('category')  # multiple categories (ids or slugs)
+    per_page = request.GET.get('per_page') or '12'
+    try:
+        per_page_int = max(1, min(60, int(per_page)))
+    except ValueError:
+        per_page_int = 12
+
+    if search_query:
+        qs = qs.filter(models.Q(name__icontains=search_query) | models.Q(description__icontains=search_query))
+    if city:
+        qs = qs.filter(location__icontains=city)
+    if date_str:
+        # Accept YYYY-MM-DD or DD/MM/YYYY
+        parsed_date = None
+        for fmt in ('%Y-%m-%d', '%d/%m/%Y', '%d-%m-%Y', '%d.%m.%Y'):
+            try:
+                parsed_date = datetime.strptime(date_str, fmt).date()
+                break
+            except ValueError:
+                continue
+        if parsed_date:
+            qs = qs.filter(date__date=parsed_date)
+
+    # Category filters
+    if categories:
+        # Accept ids or slugs against many-to-many
+        qs = qs.filter(
+            models.Q(categories__id__in=categories) |
+            models.Q(categories__slug__in=categories) |
+            models.Q(categories__name__in=categories)
+        ).distinct()
+
+    # Sorting
+    sort_map = {
+        'date_asc': 'date',
+        'date_desc': '-date',
+        'name_asc': 'name',
+        'name_desc': '-name',
+    }
+    qs = qs.order_by(sort_map.get(sort, '-date'))
+
+    # Pagination
+    paginator = Paginator(qs, per_page_int)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    context = {
+        'events': page_obj.object_list,
+        'page_obj': page_obj,
+        'paginator': paginator,
+        'search_query': search_query,
+        'selected_city': city,
+        'selected_date': date_str,
+        'selected_sort': sort,
+        'per_page': per_page_int,
+        'per_page_options': [12, 15, 18, 21, 24, 27, 30],
+        'cities': list(Event.objects.values_list('location', flat=True).distinct()),
+        'selected_categories': categories,
+        'category_list': list(Category.objects.all()),
+    }
+    return render(request, 'event_list.html', context)
 
 
 def event_detail(request, event_id):

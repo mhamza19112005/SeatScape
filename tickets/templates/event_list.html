@@ -15,7 +15,7 @@
 
     <!-- ==========Ticket-Search========== -->
     <section class="search-ticket-section padding-top pt-lg-0">
-        <div class="container">
+    <div class="container">
             <div class="search-tab bg_img" data-background="https://pixner.net/boleto/demo/assets/images/ticket/ticket-bg01.jpg">
                 <div class="row align-items-center mb--20">
                     <div class="col-lg-6 mb-20">
@@ -99,9 +99,9 @@
                         </form>
                     </div>
                     <div class="tab-item active">
-                        <form class="ticket-search-form">
+                        <form class="ticket-search-form" method="get">
                             <div class="form-group large">
-                                <input type="text" placeholder="Search fo Events">
+                                <input type="text" name="q" value="{{ search_query }}" placeholder="Search for Events">
                                 <button type="submit"><i class="fas fa-search"></i></button>
                             </div>
                             <div class="form-group">
@@ -109,14 +109,11 @@
                                     <img src="https://pixner.net/boleto/demo/assets/images/ticket/city.png" alt="ticket">
                                 </div>
                                 <span class="type">city</span>
-                                <select class="select-bar">
-                                    <option value="london">London</option>
-                                    <option value="dhaka">dhaka</option>
-                                    <option value="rosario">rosario</option>
-                                    <option value="madrid">madrid</option>
-                                    <option value="koltaka">kolkata</option>
-                                    <option value="rome">rome</option>
-                                    <option value="khoksa">khoksa</option>
+                                <select class="select-bar" name="city" onchange="this.form.submit()">
+                                    <option value="">All</option>
+                                    {% for c in cities %}
+                                    <option value="{{ c }}" {% if selected_city == c %}selected{% endif %}>{{ c }}</option>
+                                    {% endfor %}
                                 </select>
                             </div>
                             <div class="form-group">
@@ -124,26 +121,17 @@
                                     <img src="https://pixner.net/boleto/demo/assets/images/ticket/date.png" alt="ticket">
                                 </div>
                                 <span class="type">date</span>
-                                <select class="select-bar">
-                                    <option value="26-12-19">23/10/2020</option>
-                                    <option value="26-12-19">24/10/2020</option>
-                                    <option value="26-12-19">25/10/2020</option>
-                                    <option value="26-12-19">26/10/2020</option>
-                                </select>
+                                <input type="date" name="date" value="{{ selected_date }}" onchange="this.form.submit()" />
                             </div>
                             <div class="form-group">
                                 <div class="thumb">
                                     <img src="https://pixner.net/boleto/demo/assets/images/ticket/cinema.png" alt="ticket">
                                 </div>
-                                <span class="type">event</span>
-                                <select class="select-bar">
-                                    <option value="angular">angular</option>
-                                    <option value="startup">startup</option>
-                                    <option value="rosario">rosario</option>
-                                    <option value="madrid">madrid</option>
-                                    <option value="koltaka">kolkata</option>
-                                    <option value="Last-First">Last-First</option>
-                                    <option value="wish">wish</option>
+                                <span class="type">per page</span>
+                                <select class="select-bar" name="per_page" onchange="this.form.submit()">
+                                    {% for n in per_page_options %}
+                                    <option value="{{ n }}" {% if per_page == n %}selected{% endif %}>{{ n }}</option>
+                                    {% endfor %}
                                 </select>
                             </div>
                         </form>
@@ -215,35 +203,41 @@
                         </div>
                         <div class="widget-1-body">
                             <h6 class="subtitle">categories</h6>
-                            <div class="check-area">
-                                <div class="form-group">
-                                    <input type="checkbox" name="lang" id="cat1"><label for="cat1">all</label>
+                            <form method="get" id="categoryForm">
+                                <input type="hidden" name="q" value="{{ search_query }}">
+                                <input type="hidden" name="city" value="{{ selected_city }}">
+                                <input type="hidden" name="date" value="{{ selected_date }}">
+                                <input type="hidden" name="per_page" value="{{ per_page }}">
+                                <input type="hidden" name="sort" value="{{ selected_sort }}">
+                                <div class="check-area">
+                                    <div class="form-group">
+                                        <input type="checkbox" id="cat-all" {% if not selected_categories %}checked{% endif %} onclick="handleAllCategoryClick(event)">
+                                        <label for="cat-all">ALL</label>
+                                    </div>
+                                    {% for cat in category_list %}
+                                    <div class="form-group">
+                                        <input type="checkbox" name="category" value="{{ cat.id }}" id="cat-{{ cat.id }}" {% if cat.id|stringformat:'s' in selected_categories or cat.slug in selected_categories or cat.name in selected_categories %}checked{% endif %} onchange="document.getElementById('categoryForm').submit()">
+                                        <label for="cat-{{ cat.id }}">{{ cat.name }}</label>
+                                    </div>
+                                    {% empty %}
+                                    <p>No categories yet. Add some in admin.</p>
+                                    {% endfor %}
                                 </div>
-                                <div class="form-group">
-                                    <input type="checkbox" name="lang" id="cat2"><label for="cat2">Screening</label>
-                                </div>
-                                <div class="form-group">
-                                    <input type="checkbox" name="lang" id="cat3"><label for="cat3">meetings</label>
-                                </div>
-                                <div class="form-group">
-                                    <input type="checkbox" name="lang" id="cat4"><label for="cat4">Performances</label>
-                                </div>
-                                <div class="form-group">
-                                    <input type="checkbox" name="lang" id="cat5"><label for="cat5">workshops</label>
-                                </div>
-                                <div class="form-group">
-                                    <input type="checkbox" name="lang" id="cat6"><label for="cat6">Exhibitions </label>
-                                </div>
-                                <div class="form-group">
-                                    <input type="checkbox" name="lang" id="cat8"><label for="cat8">music shows</label>
-                                </div>
-                                <div class="form-group">
-                                    <input type="checkbox" name="lang" id="cat9"><label for="cat9">comedy shows</label>
-                                </div>
-                                <div class="form-group">
-                                    <input type="checkbox" name="lang" id="cat10"><label for="cat10">Award shows</label>
-                                </div>
-                            </div>
+                            </form>
+                            <script>
+                                function handleAllCategoryClick(e){
+                                    const form = document.getElementById('categoryForm');
+                                    if(e.target.checked){
+                                        // Uncheck all category checkboxes and submit with no category params
+                                        const checks = form.querySelectorAll("input[name='category']");
+                                        checks.forEach(cb => cb.checked = false);
+                                        form.submit();
+                                    } else {
+                                        // Prevent unchecking ALL without selecting anything else
+                                        e.target.checked = true;
+                                    }
+                                }
+                            </script>
                         </div>
                     </div>
                 </div>
@@ -266,18 +260,24 @@
                                     </div>
                                     <div class="item mr-0">
                                         <span class="show">Sort By :</span>
-                                        <select class="select-bar">
-                                            <option value="showing">now showing</option>
-                                            <option value="exclusive">exclusive</option>
-                                            <option value="trending">trending</option>
-                                            <option value="most-view">most view</option>
-                                        </select>
+                                        <form method="get" id="sortForm">
+                                            <input type="hidden" name="q" value="{{ search_query }}">
+                                            <input type="hidden" name="city" value="{{ selected_city }}">
+                                            <input type="hidden" name="date" value="{{ selected_date }}">
+                                            <input type="hidden" name="per_page" value="{{ per_page }}">
+                                            <select class="select-bar" name="sort" onchange="document.getElementById('sortForm').submit()">
+                                                <option value="date_desc" {% if selected_sort == 'date_desc' %}selected{% endif %}>Newest</option>
+                                                <option value="date_asc" {% if selected_sort == 'date_asc' %}selected{% endif %}>Oldest</option>
+                                                <option value="name_asc" {% if selected_sort == 'name_asc' %}selected{% endif %}>Name A-Z</option>
+                                                <option value="name_desc" {% if selected_sort == 'name_desc' %}selected{% endif %}>Name Z-A</option>
+                                            </select>
+                                        </form>
                                     </div>
                                 </div>
                             </div>
                         </div>
                         <div class="row mb-10 justify-content-center">
-                            {% for event in events %}
+        {% for event in events %}
                             <div class="col-sm-6 col-lg-4">
                                 <div class="event-grid">
                                     <div class="movie-thumb c-thumb">
@@ -291,26 +291,36 @@
                                     </div>
                                     <div class="movie-content bg-one">
                                         <h5 class="title m-0">
-                                            <a href="event-details.html">{{ event.name }}</a>
+                                            <a href="{% url 'event_detail' event.id %}">{{ event.name }}</a>
                                         </h5>
                                         <div class="movie-rating-percent">
                                             <span>{{ event.location }}</span>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                            {% empty %}
-                            <p class="no-events">No events available.</p>
-                            {% endfor %}
-                        </div>
+            </div>
+        {% empty %}
+            <p class="no-events">No events available.</p>
+        {% endfor %}
+    </div>
                         <div class="pagination-area text-center">
-                            <a href="#0"><i class="fas fa-angle-double-left"></i><span>Prev</span></a>
-                            <a href="#0">1</a>
-                            <a href="#0">2</a>
-                            <a href="#0" class="active">3</a>
-                            <a href="#0">4</a>
-                            <a href="#0">5</a>
-                            <a href="#0"><span>Next</span><i class="fas fa-angle-double-right"></i></a>
+                            {% if page_obj.has_previous %}
+                              <a href="?q={{ search_query }}&city={{ selected_city }}&date={{ selected_date }}&per_page={{ per_page }}&sort={{ selected_sort }}&page={{ page_obj.previous_page_number }}">
+                                <i class="fas fa-angle-double-left"></i><span>Prev</span>
+                              </a>
+                            {% endif %}
+                            {% for num in paginator.page_range %}
+                              {% if page_obj.number == num %}
+                                <a href="#0" class="active">{{ num }}</a>
+                              {% else %}
+                                <a href="?q={{ search_query }}&city={{ selected_city }}&date={{ selected_date }}&per_page={{ per_page }}&sort={{ selected_sort }}&page={{ num }}">{{ num }}</a>
+                              {% endif %}
+                            {% endfor %}
+                            {% if page_obj.has_next %}
+                              <a href="?q={{ search_query }}&city={{ selected_city }}&date={{ selected_date }}&per_page={{ per_page }}&sort={{ selected_sort }}&page={{ page_obj.next_page_number }}">
+                                <span>Next</span><i class="fas fa-angle-double-right"></i>
+                              </a>
+                            {% endif %}
                         </div>
                     </div>
                 </div>
