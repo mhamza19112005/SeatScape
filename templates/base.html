@@ -1,34 +1,80 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
 
-    <link rel="stylesheet" href="https://pixner.net/boleto/demo/assets/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://pixner.net/boleto/demo/assets/css/all.min.css">
-    <link rel="stylesheet" href="https://pixner.net/boleto/demo/assets/css/animate.css">
-    <link rel="stylesheet" href="https://pixner.net/boleto/demo/assets/css/flaticon.css">
-    <link rel="stylesheet" href="https://pixner.net/boleto/demo/assets/css/magnific-popup.css">
-    <link rel="stylesheet" href="https://pixner.net/boleto/demo/assets/css/odometer.css">
-    <link rel="stylesheet" href="https://pixner.net/boleto/demo/assets/css/owl.carousel.min.css">
-    <link rel="stylesheet" href="https://pixner.net/boleto/demo/assets/css/owl.theme.default.min.css">
-    <link rel="stylesheet" href="https://pixner.net/boleto/demo/assets/css/nice-select.css">
-    <link rel="stylesheet" href="https://pixner.net/boleto/demo/assets/css/jquery.animatedheadline.css">
-    <link rel="stylesheet" href="https://pixner.net/boleto/demo/assets/css/main.css">
+    <link
+      rel="stylesheet"
+      href="https://pixner.net/boleto/demo/assets/css/bootstrap.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://pixner.net/boleto/demo/assets/css/all.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://pixner.net/boleto/demo/assets/css/animate.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://pixner.net/boleto/demo/assets/css/flaticon.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://pixner.net/boleto/demo/assets/css/magnific-popup.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://pixner.net/boleto/demo/assets/css/odometer.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://pixner.net/boleto/demo/assets/css/owl.carousel.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://pixner.net/boleto/demo/assets/css/owl.theme.default.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://pixner.net/boleto/demo/assets/css/nice-select.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://pixner.net/boleto/demo/assets/css/jquery.animatedheadline.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://pixner.net/boleto/demo/assets/css/main.css"
+    />
 
-    <link rel="shortcut icon" href="https://pixner.net/boleto/demo/assets/images/favicon.png" type="image/x-icon">
+    <link
+      rel="shortcut icon"
+      href="https://pixner.net/boleto/demo/assets/images/favicon.png"
+      type="image/x-icon"
+    />
 
     <title>{% block title %}SeatScape - Event Booking{% endblock %}</title>
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
 
     <style>
       .footer-section::before {
         position: absolute;
-        content: '';
+        content: "";
         bottom: 0;
         right: 0;
         left: 0;
@@ -48,15 +94,73 @@
           top: 120px;
         }
       }
-      .user-profile { position: relative; display: inline-block; }
-      .profile-toggle { background: transparent; border: 0; color: #fff; display: flex; align-items: center; gap: 8px; cursor: pointer; }
-      .user-avatar { width: 32px; height: 32px; border-radius: 50%; background: #2a7cff; display: inline-flex; align-items: center; justify-content: center; font-weight: 700; color: #fff; text-transform: uppercase; }
-      .profile-dropdown { position: absolute; top: 120%; right: 0; background: #0a1e5e; border: 1px solid rgba(255,255,255,0.1); min-width: 180px; box-shadow: 0 8px 24px rgba(0,0,0,0.2); display: none; z-index: 1000; }
-      .profile-dropdown a { display: block; padding: 10px 14px; color: #fff; white-space: nowrap; }
-      .profile-dropdown a:hover { background: rgba(255,255,255,0.08); }
-      .user-profile:hover .profile-dropdown { display: block; }
+      .user-profile {
+        position: relative;
+        display: inline-block;
+      }
+      .profile-toggle {
+        background: transparent;
+        border: 0;
+        color: #fff;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        cursor: pointer;
+      }
+      .user-avatar {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background: #2a7cff;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        color: #fff;
+        text-transform: uppercase;
+      }
+      .profile-dropdown {
+        position: absolute;
+        top: 120%;
+        right: 0;
+        background: #0a1e5e;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        min-width: 180px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+        display: none;
+        z-index: 1000;
+      }
+      .profile-dropdown a {
+        display: block;
+        padding: 10px 14px;
+        color: #fff;
+        white-space: nowrap;
+      }
+      .profile-dropdown a:hover {
+        background: rgba(255, 255, 255, 0.08);
+      }
+      .user-profile:hover .profile-dropdown {
+        display: block;
+      }
       @media (min-width: 992px) {
-        a.avatar-dropdown { display: flex; align-items: center; gap: 5px; }
+        a.avatar-dropdown {
+          display: flex;
+          align-items: center;
+          gap: 5px;
+        }
+      }
+      [class^="flaticon-"]:before,
+      [class*=" flaticon-"]:before,
+      [class^="flaticon-"]:after,
+      [class*=" flaticon-"]:after {
+        font-family: "FontAwesome";
+        font-style: normal;
+      }
+      .checkout-contact-form label {
+        display: none;
+      }
+      .checkout-contact-form input {
+        background-color: transparent;
       }
     </style>
   </head>
@@ -79,22 +183,31 @@
         <div class="header-wrapper">
           <div class="logo">
             <a href="{% url 'home' %}">
-              <img src="https://pixner.net/boleto/demo/assets/images/logo/logo.png" alt="logo">
+              <img
+                src="https://pixner.net/boleto/demo/assets/images/logo/logo.png"
+                alt="logo"
+              />
             </a>
           </div>
           <ul class="menu">
             <li>
-              <a href="{% url 'home' %}" class="{% block nav_home_active %}{% endblock %}">Home</a>
+              <a
+                href="{% url 'home' %}"
+                class="{% block nav_home_active %}{% endblock %}"
+                >Home</a
+              >
             </li>
             <li>
               <a href="{% url 'event_list' %}">events</a>
-              {% comment %} <ul class="submenu">
+              {% comment %}
+              <ul class="submenu">
                 <li><a href="#">Events</a></li>
                 <li><a href="#">Event Details</a></li>
                 <li><a href="#">Event Speaker</a></li>
                 <li><a href="#">Event Ticket</a></li>
                 <li><a href="#">Event Checkout</a></li>
-              </ul> {% endcomment %}
+              </ul>
+              {% endcomment %}
             </li>
             <li>
               <a href="{% url 'about' %}">About Us</a>
@@ -108,11 +221,15 @@
             {% if user.is_authenticated %}
             <li class="user-profile">
               <a href="#" class="profile-toggle">
-                <div class="user-avatar">{{ user.username|slice:":1"|upper }}</div>
+                <div class="user-avatar">
+                  {{ user.username|slice:":1"|upper }}
+                </div>
                 <span>{{ user.username }}</span>
               </a>
               <div class="profile-dropdown">
-                <a href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                <a href="{% url 'logout' %}"
+                  ><i class="fas fa-sign-out-alt"></i> Logout</a
+                >
               </div>
             </li>
             {% else %}
@@ -130,19 +247,20 @@
       </div>
     </header>
 
-    <main>
-      {% block content %}{% endblock %}
-    </main>
+    <main>{% block content %}{% endblock %}</main>
 
     <footer class="footer-section">
       <div class="newslater-section padding-bottom">
         <div class="container">
-          <div class="newslater-container bg_img" data-background="https://pixner.net/boleto/demo/assets/images/newslater/newslater-bg01.jpg">
+          <div
+            class="newslater-container bg_img"
+            data-background="https://pixner.net/boleto/demo/assets/images/newslater/newslater-bg01.jpg"
+          >
             <div class="newslater-wrapper">
               <h5 class="cate">subscribe to Boleto</h5>
               <h3 class="title">to get exclusive benifits</h3>
               <form class="newslater-form">
-                <input type="text" placeholder="Your Email Address">
+                <input type="text" placeholder="Your Email Address" />
                 <button type="submit">subscribe</button>
               </form>
               <p>We respect your privacy, so we never share your info</p>
@@ -154,15 +272,38 @@
         <div class="footer-top">
           <div class="logo">
             <a href="{% url 'home' %}">
-              <img src="https://pixner.net/boleto/demo/assets/images/footer/footer-logo.png" alt="footer">
+              <img
+                src="https://pixner.net/boleto/demo/assets/images/footer/footer-logo.png"
+                alt="footer"
+              />
             </a>
           </div>
           <ul class="social-icons">
-            <li><a href="https://facebook.com" target="_blank"><i class="fab fa-facebook-f"></i></a></li>
-            <li><a href="https://twitter.com" target="_blank"><i class="fab fa-twitter"></i></a></li>
-            <li><a href="https://pinterest.com" target="_blank"><i class="fab fa-pinterest-p"></i></a></li>
-            <li><a href="https://google.com" target="_blank"><i class="fab fa-google"></i></a></li>
-            <li><a href="https://instagram.com" target="_blank"><i class="fab fa-instagram"></i></a></li>
+            <li>
+              <a href="https://facebook.com" target="_blank"
+                ><i class="fab fa-facebook-f"></i
+              ></a>
+            </li>
+            <li>
+              <a href="https://twitter.com" target="_blank"
+                ><i class="fab fa-twitter"></i
+              ></a>
+            </li>
+            <li>
+              <a href="https://pinterest.com" target="_blank"
+                ><i class="fab fa-pinterest-p"></i
+              ></a>
+            </li>
+            <li>
+              <a href="https://google.com" target="_blank"
+                ><i class="fab fa-google"></i
+              ></a>
+            </li>
+            <li>
+              <a href="https://instagram.com" target="_blank"
+                ><i class="fab fa-instagram"></i
+              ></a>
+            </li>
           </ul>
         </div>
         <div class="footer-bottom">
@@ -178,9 +319,18 @@
       </div>
     </footer>
 
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js" crossorigin="anonymous"></script>
+    <script
+      src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js"
+      crossorigin="anonymous"
+    ></script>
 
     <script src="https://pixner.net/boleto/demo/assets/js/jquery-3.3.1.min.js"></script>
     <script src="https://pixner.net/boleto/demo/assets/js/modernizr-3.6.0.min.js"></script>
@@ -199,6 +349,4 @@
 
     {% block extra_js %}{% endblock %}
   </body>
-  </html>
-
-
+</html>

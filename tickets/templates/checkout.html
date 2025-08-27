@@ -1,1068 +1,183 @@
 {% extends 'base.html' %}
-{% load static %}
-
-{% block title %}Checkout - {{ event.name }}{% endblock %}
-
-{% block extra_css %}
-    <style>
-    .checkout-container {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        min-height: 100vh;
-        padding: 30px 0;
-        color: #333;
-    }
-    
-    .checkout-widget {
-        background: white;
-        border-radius: 15px;
-        padding: 30px;
-        margin-bottom: 25px;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-        border: 1px solid rgba(255,255,255,0.2);
-        backdrop-filter: blur(10px);
-    }
-    
-    .checkout-widget h5 {
-        color: #2c3e50;
-        margin-bottom: 25px;
-        font-weight: 700;
-        font-size: 1.3rem;
-        border-bottom: 2px solid #3498db;
-        padding-bottom: 10px;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-    }
-    
-    .checkout-widget h5 i {
-        color: #3498db;
-        font-size: 1.2rem;
-    }
-    
-    .form-group {
-        margin-bottom: 25px;
-    }
-    
-    .form-group label {
-        font-weight: 600;
-        color: #2c3e50;
-        margin-bottom: 8px;
-        display: block;
-    }
-    
-    .form-control {
-        border: 2px solid #e9ecef;
-        border-radius: 12px;
-        padding: 15px 20px;
-        font-size: 16px;
-        transition: all 0.3s ease;
-        background: #f8f9fa;
-            color: #2c3e50;
-        }
-        
-    .form-control:focus {
-        border-color: #3498db;
-        box-shadow: 0 0 0 0.3rem rgba(52,152,219,0.15);
-            background: white;
-        outline: none;
-    }
-    
-    .form-control::placeholder {
-        color: #95a5a6;
-    }
-    
-    .payment-option {
-        list-style: none;
-        padding: 0;
-        margin: 0;
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 15px;
-    }
-    
-    .payment-option li {
-        margin-bottom: 0;
-    }
-    
-    .payment-option a {
-        display: flex;
-        align-items: center;
-            padding: 20px;
-        border: 2px solid #e9ecef;
-        border-radius: 12px;
-        text-decoration: none;
-        color: #2c3e50;
-        transition: all 0.3s ease;
-        cursor: pointer;
-        background: white;
-        position: relative;
-        overflow: hidden;
-    }
-    
-    .payment-option a::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: -100%;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(90deg, transparent, rgba(52,152,219,0.1), transparent);
-        transition: left 0.5s;
-    }
-    
-    .payment-option a:hover::before {
-        left: 100%;
-    }
-    
-    .payment-option a:hover,
-    .payment-option li.active a {
-        border-color: #3498db;
-        background: linear-gradient(135deg, #f8f9ff, #e3f2fd);
-        transform: translateY(-2px);
-        box-shadow: 0 8px 25px rgba(52,152,219,0.2);
-    }
-    
-    .payment-option li.active a::after {
-        content: '✓';
-        position: absolute;
-        top: 10px;
-        right: 15px;
-        background: #3498db;
-        color: white;
-        width: 25px;
-        height: 25px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-weight: bold;
-            font-size: 14px;
-        }
-        
-    .payment-option img {
-        width: 45px;
-        height: 30px;
-        margin-right: 15px;
-        object-fit: contain;
-        filter: grayscale(100%);
-        transition: filter 0.3s ease;
-    }
-    
-    .payment-option li.active img,
-    .payment-option a:hover img {
-        filter: grayscale(0%);
-    }
-    
-    .payment-option span {
-        font-weight: 600;
-        font-size: 16px;
-    }
-    
-    .card-fields {
-        display: none;
-        animation: fadeIn 0.5s ease;
-    }
-    
-    .card-fields.show {
-        display: block;
-    }
-    
-    @keyframes fadeIn {
-        from { opacity: 0; transform: translateY(10px); }
-        to { opacity: 1; transform: translateY(0); }
-    }
-    
-    .custom-button {
-        background: linear-gradient(135deg, #3498db, #2980b9);
-        color: white;
-        border: none;
-        padding: 15px 35px;
-        border-radius: 30px;
-        font-weight: 700;
-        font-size: 16px;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        text-decoration: none;
-        display: inline-block;
-        text-align: center;
-        box-shadow: 0 5px 15px rgba(52,152,219,0.3);
-        position: relative;
-        overflow: hidden;
-    }
-    
-    .custom-button::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: -100%;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-        transition: left 0.5s;
-    }
-    
-    .custom-button:hover::before {
-        left: 100%;
-    }
-    
-    .custom-button:hover {
-        background: linear-gradient(135deg, #2980b9, #1f5f8b);
-        transform: translateY(-3px);
-        box-shadow: 0 8px 25px rgba(52,152,219,0.4);
-        color: white;
-        text-decoration: none;
-    }
-    
-    .custom-button:disabled {
-        background: #95a5a6;
-        cursor: not-allowed;
-        transform: none;
-        box-shadow: none;
-    }
-    
-    .custom-button.w-100 {
-        width: 100%;
-        padding: 18px;
-        font-size: 18px;
-    }
-    
-    .back-button {
-        background: linear-gradient(135deg, #e74c3c, #c0392b);
-        box-shadow: 0 5px 15px rgba(231,76,60,0.3);
-    }
-    
-    .back-button:hover {
-        background: linear-gradient(135deg, #c0392b, #a93226);
-        box-shadow: 0 8px 25px rgba(231,76,60,0.4);
-    }
-    
-    .booking-summary {
-            background: white;
-        border-radius: 15px;
-        padding: 30px;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-        position: sticky;
-        top: 20px;
-        border: 1px solid rgba(255,255,255,0.2);
-    }
-    
-    .booking-summary h4 {
-        color: #2c3e50;
-        margin-bottom: 25px;
-        font-weight: 700;
-        text-transform: capitalize;
-        border-bottom: 2px solid #3498db;
-        padding-bottom: 10px;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-    }
-    
-    .summary-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        padding: 15px 0;
-        border-bottom: 1px solid #ecf0f1;
-        transition: all 0.3s ease;
-    }
-    
-    .summary-item:hover {
-        background: #f8f9fa;
-        padding-left: 10px;
-        padding-right: 10px;
-            border-radius: 8px;
-    }
-    
-    .summary-item:last-child {
-        border-bottom: none;
-    }
-    
-    .summary-item .subtitle {
-        font-weight: 600;
-        color: #2c3e50;
-        margin: 0;
-        font-size: 16px;
-    }
-    
-    .summary-item .info {
-        color: #7f8c8d;
-        text-align: right;
-        font-weight: 500;
-    }
-    
-    .total-amount {
-        background: linear-gradient(135deg, #3498db, #2980b9);
-        color: white;
-        padding: 20px;
-        border-radius: 12px;
-        margin-top: 25px;
-        text-align: center;
-    }
-    
-    .total-amount h6 {
-        font-size: 20px;
-        font-weight: 700;
-        margin: 0;
-        color: white;
-    }
-    
-    .coupon-section {
-        background: linear-gradient(135deg, #f8f9fa, #e9ecef);
-        padding: 25px;
-        border-radius: 12px;
-        margin: 25px 0;
-        border: 1px solid #dee2e6;
-    }
-    
-    .coupon-section h6 {
-        color: #2c3e50;
-        font-weight: 600;
-        margin-bottom: 15px;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-    }
-    
-    .coupon-form {
-            display: flex;
-            gap: 15px;
-        }
-        
-    .coupon-form input {
-            flex: 1;
-        border-radius: 25px;
-        padding: 12px 20px;
-    }
-    
-    .coupon-form button {
-        white-space: nowrap;
-        padding: 12px 25px;
-        border-radius: 25px;
-        background: linear-gradient(135deg, #e74c3c, #c0392b);
-        border: none;
-        color: white;
-        font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        
-    .coupon-form button:hover {
-        background: linear-gradient(135deg, #c0392b, #a93226);
-        transform: translateY(-2px);
-        box-shadow: 0 5px 15px rgba(231,76,60,0.3);
-    }
-    
-    .alert {
-        padding: 15px 20px;
-        border-radius: 10px;
-        margin-bottom: 20px;
-        border: none;
-        font-weight: 500;
-    }
-    
-    .alert-success {
-        background: linear-gradient(135deg, #d4edda, #c3e6cb);
-        color: #155724;
-        border-left: 4px solid #28a745;
-    }
-    
-    .alert-danger {
-        background: linear-gradient(135deg, #f8d7da, #f5c6cb);
-        color: #721c24;
-        border-left: 4px solid #dc3545;
-    }
-    
-    .form-check {
-        margin-bottom: 20px;
-            padding: 15px;
-        background: #f8f9fa;
-        border-radius: 10px;
-        border: 1px solid #e9ecef;
-    }
-    
-    .form-check-input {
-        margin-right: 15px;
-        transform: scale(1.2);
-    }
-    
-    .form-check-label {
-        font-size: 15px;
-        color: #2c3e50;
-            cursor: pointer;
-    }
-    
-    .form-check-label .title {
-        font-weight: 700;
-        color: #2c3e50;
-        display: block;
-        margin-bottom: 8px;
-            font-size: 16px;
-    }
-    
-    .form-check-label .info {
-        font-size: 13px;
-        color: #7f8c8d;
-        line-height: 1.4;
-    }
-    
-    .countdown-timer {
-        background: linear-gradient(135deg, #e74c3c, #c0392b);
-        color: white;
-        padding: 15px 25px;
-        border-radius: 30px;
-            text-align: center;
-        margin-bottom: 25px;
-        box-shadow: 0 5px 15px rgba(231,76,60,0.3);
-        animation: pulse 2s infinite;
-    }
-    
-    @keyframes pulse {
-        0% { transform: scale(1); }
-        50% { transform: scale(1.05); }
-        100% { transform: scale(1); }
-    }
-    
-    .countdown-timer h5 {
-        margin: 0;
-        font-size: 20px;
-        font-weight: 700;
-    }
-    
-    .countdown-timer p {
-        margin: 5px 0 0 0;
-        font-size: 13px;
-        opacity: 0.9;
-        font-weight: 500;
-    }
-    
-    .page-header {
-        background: rgba(255,255,255,0.1);
-        backdrop-filter: blur(10px);
-        border-radius: 15px;
-        padding: 25px;
-        margin-bottom: 30px;
-        border: 1px solid rgba(255,255,255,0.2);
-    }
-    
-    .page-header h2 {
-        color: white;
-        font-weight: 700;
-        margin-bottom: 5px;
-        text-shadow: 0 2px 4px rgba(0,0,0,0.3);
-    }
-    
-    .page-header p {
-        color: rgba(255,255,255,0.9);
-        margin: 0;
-        font-weight: 500;
-    }
-    
-    .security-notice {
-        background: linear-gradient(135deg, #e3f2fd, #bbdefb);
-        border: 1px solid #2196f3;
-        border-radius: 10px;
-        padding: 20px;
-            margin-top: 20px;
-        }
-        
-    .security-notice i {
-        color: #2196f3;
-        margin-right: 10px;
-    }
-    
-    .security-notice strong {
-        color: #1976d2;
-        }
-        
-        @media (max-width: 768px) {
-        .checkout-container {
-            padding: 15px 0;
-        }
-        
-        .checkout-widget {
-            padding: 20px;
-        }
-        
-        .coupon-form {
-                flex-direction: column;
-            }
-        
-        .payment-option {
-            grid-template-columns: 1fr;
-        }
-        
-        .payment-option a {
-            padding: 15px;
-        }
-        
-        .payment-option img {
-            width: 35px;
-            height: 25px;
-            margin-right: 12px;
-        }
-        
-        .page-header {
-            padding: 20px;
-        }
-        
-        .page-header h2 {
-            font-size: 1.5rem;
-            }
-        }
-    </style>
-{% endblock %}
 
 {% block content %}
-<div class="checkout-container">
-    <div class="container">
-        <!-- Page Header -->
-        <div class="page-header">
-            <div class="row align-items-center">
-                <div class="col-md-3">
-                    <a href="{% url 'event_detail' event.id %}" class="custom-button back-button">
-                        <i class="fas fa-arrow-left"></i> Back to Event
-                    </a>
-                </div>
-                <div class="col-md-6 text-center">
-                    <h2 class="mb-0">{{ event.name }}</h2>
-                    <p class="mb-0">{{ event.date|date:"D, M d Y" }} at {{ event.date|time:"g:i A" }}</p>
-                </div>
-                <div class="col-md-3 text-end">
-                    <div class="countdown-timer">
-                        <h5 id="countdown">05:00</h5>
-                        <p>Mins Left</p>
+    <!-- ==========Banner-Section========== -->
+    <section class="details-banner event-details-banner hero-area bg_img seat-plan-banner" data-background="https://pixner.net/boleto/demo/assets/images/banner/banner07.jpg">
+        <div class="container">
+            <div class="details-banner-wrapper">
+                <div class="details-banner-content style-two">
+                    <h3 class="title"><span class="d-block">{{ event.name }}</span> 
+                        {% comment %} <span class="d-block">Conference -2020</span></h3> {% endcomment %}
+                    <div class="tags">
+                        <span>{{ event.location }}</span>
                     </div>
                 </div>
             </div>
         </div>
+    </section>
+    <!-- ==========Banner-Section========== -->
 
-        <div class="row">
-            <!-- Left Column - Forms -->
-            <div class="col-lg-8">
-                <!-- Contact Details Form -->
-                <div class="checkout-widget">
-                    <h5><i class="fas fa-user"></i> Contact Details</h5>
-                    <form id="contactForm" method="post">
-                        {% csrf_token %}
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="{{ contact_form.full_name.id_for_label }}">Full Name</label>
+    <!-- ==========Page-Title========== -->
+    <section class="page-title bg-one">
+        <div class="container">
+            <div class="page-title-area">
+                <div class="item md-order-1">
+                    <a href="{% url 'event_detail' event.id %}" class="custom-button back-button">
+                        <i class="flaticon-double-right-arrows-angles"></i>back
+                    </a>
+                </div>
+                <div class="item date-item">
+                    <h5 class="date">{{ event.date|date:"D, M d Y" }}</h5>
+                </div>
+                <div class="item">
+                    <h5 class="title">{{ event.date|time:"g:i A" }}</h5>
+                    {% comment %} <p>Mins Left</p> {% endcomment %}
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- ==========Page-Title========== -->
+
+    <!-- ==========Event-Section========== -->
+    <div class="event-facility padding-bottom padding-top">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8">
+                    <div class="checkout-widget checkout-contact">
+                        <h5 class="title"><i class="fas fa-user"></i>  Share your Contact  Details </h5>
+                        <form class="checkout-contact-form" id="contactForm" method="post">
+                            {% csrf_token %}
+                            <input type="hidden" name="event_id" value="{{ event.id }}">
+                            <input type="hidden" name="event_name" value="{{ event.name }}">
+                            <div class="form-group">
+                                {% comment %} <input type="text" placeholder="Full Name"> {% endcomment %}
+                                <label for="{{ contact_form.full_name.id_for_label }}">Full Name</label>
                                     {{ contact_form.full_name }}
                                     {% if contact_form.full_name.errors %}
                                         <div class="alert alert-danger">{{ contact_form.full_name.errors.0 }}</div>
                                     {% endif %}
-                                </div>
                             </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="{{ contact_form.email.id_for_label }}">Email Address</label>
+                            <div class="form-group">
+                                {% comment %} <input type="text" placeholder="Enter your Mail"> {% endcomment %}
+                                <label for="{{ contact_form.email.id_for_label }}">Email Address</label>
                                     {{ contact_form.email }}
                                     {% if contact_form.email.errors %}
                                         <div class="alert alert-danger">{{ contact_form.email.errors.0 }}</div>
                                     {% endif %}
-                                </div>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="{{ contact_form.phone.id_for_label }}">Phone Number</label>
-                            {{ contact_form.phone }}
-                            {% if contact_form.phone.errors %}
-                                <div class="alert alert-danger">{{ contact_form.phone.errors.0 }}</div>
-                            {% endif %}
-                        </div>
-                    </form>
-        </div>
-        
-                <!-- Payment Method Selection -->
-                <div class="checkout-widget">
-                    <h5><i class="fas fa-credit-card"></i> Payment Method</h5>
-                    <ul class="payment-option">
-                        <li class="active" data-method="credit_card">
-                            <a href="#0">
-                                <img src="https://pixner.net/boleto/demo/assets/images/payment/card.png" alt="Credit Card">
-                                <span>Credit Card</span>
-                            </a>
-                        </li>
-                        <li data-method="debit_card">
-                            <a href="#0">
-                                <img src="https://pixner.net/boleto/demo/assets/images/payment/card.png" alt="Debit Card">
-                                <span>Debit Card</span>
-                            </a>
-                        </li>
-                        <li data-method="paypal">
-                            <a href="#0">
-                                <img src="https://pixner.net/boleto/demo/assets/images/payment/paypal.png" alt="PayPal">
-                                <span>PayPal</span>
-                            </a>
-                        </li>
-                    </ul>
-            </div>
-
-                <!-- Payment Form -->
-                <div class="checkout-widget">
-                    <h5><i class="fas fa-lock"></i> Payment Details</h5>
-                    <form id="paymentForm" method="post">
-                        {% csrf_token %}
-                        
-                        <!-- Payment method radio buttons (hidden but required for form validation) -->
-                        <div style="display: none;">
-                            {{ payment_form.payment_method }}
-        </div>
-        
-                        <!-- Hidden payment method field for JavaScript -->
-                        <input type="hidden" name="payment_method" id="paymentMethod" value="credit_card">
-                        
-                        <!-- Card fields (shown by default) -->
-                        <div id="cardFields" class="card-fields show">
-                            <div class="form-group">
-                                <label for="{{ payment_form.card_number.id_for_label }}">Card Number</label>
-                                {{ payment_form.card_number }}
-                                {% if payment_form.card_number.errors %}
-                                    <div class="alert alert-danger">{{ payment_form.card_number.errors.0 }}</div>
-                                {% endif %}
                             </div>
                             <div class="form-group">
-                                <label for="{{ payment_form.card_holder_name.id_for_label }}">Cardholder Name</label>
-                                {{ payment_form.card_holder_name }}
-                                {% if payment_form.card_holder_name.errors %}
-                                    <div class="alert alert-danger">{{ payment_form.card_holder_name.errors.0 }}</div>
-                                {% endif %}
+                                {% comment %} <input type="text" placeholder="Enter your Phone Number "> {% endcomment %}
+                                <label for="{{ contact_form.phone.id_for_label }}">Phone Number</label>
+                                    {{ contact_form.phone }}
+                                    {% if contact_form.phone.errors %}
+                                        <div class="alert alert-danger">{{ contact_form.phone.errors.0 }}</div>
+                                    {% endif %}
                             </div>
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label for="{{ payment_form.expiry_date.id_for_label }}">Expiry Date</label>
-                                        {{ payment_form.expiry_date }}
-                                        {% if payment_form.expiry_date.errors %}
-                                            <div class="alert alert-danger">{{ payment_form.expiry_date.errors.0 }}</div>
-                                        {% endif %}
-                                    </div>
+                            <div class="form-group">
+                                {% comment %} <input type="submit" value="Continue" class="custom-button"> {% endcomment %}
+                                <input type="submit" value="Continue" class="custom-button">
+                            </div>
+                        </form>
+                    </div>
+                    <div class="checkout-widget checkout-card mb-0">
+                        <h5 class="title"><i class="fas fa-credit-card"></i> Payment Option </h5>
+                        <ul class="payment-option">
+                            <li class="active" data-method="credit_card">
+                                <a href="#0">
+                                    <img src="https://pixner.net/boleto/demo/assets/images/payment/card.png" alt="payment">
+                                    <span>Credit Card</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#0">
+                                    <img src="https://pixner.net/boleto/demo/assets/images/payment/card.png" alt="payment">
+                                    <span>Debit Card</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#0">
+                                    <img src="https://pixner.net/boleto/demo/assets/images/payment/paypal.png" alt="payment">
+                                    <span>paypal</span>
+                                </a>
+                            </li>
+                        </ul>
+                        <h6 class="subtitle">Enter Your Card Details </h6>
+                        <form class="payment-card-form">
+                            <div class="form-group w-100">
+                                <label for="card1">Card Details</label>
+                                <input type="text" id="card1">
+                                <div class="right-icon">
+                                    <i class="flaticon-lock"></i>
                                 </div>
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label for="{{ payment_form.cvv.id_for_label }}">CVV</label>
-                                        {{ payment_form.cvv }}
-                                        {% if payment_form.cvv.errors %}
-                                            <div class="alert alert-danger">{{ payment_form.cvv.errors.0 }}</div>
-                                        {% endif %}
-                                    </div>
-                </div>
-            </div>
-        </div>
-        
-                        <!-- PayPal fields (hidden by default) -->
-                        <div id="paypalFields" class="card-fields">
-                            <div class="alert alert-info">
-                                <i class="fab fa-paypal"></i> You will be redirected to PayPal to complete your payment.
-                </div>
-                </div>
-
-                        <div class="form-group">
-                            <div class="form-check">
-                                {{ payment_form.save_card }}
-                                <label class="form-check-label" for="{{ payment_form.save_card.id_for_label }}">
-                                    <span class="title">Save Payment Method</span>
-                                    <span class="info">Save this payment information for faster checkout next time.</span>
-                                </label>
-                </div>
-            </div>
-            
-            <div class="form-group">
-                            <div class="form-check">
-                                {{ payment_form.terms_accepted }}
-                                <label class="form-check-label" for="{{ payment_form.terms_accepted.id_for_label }}">
-                                    <span class="title">Terms & Conditions</span>
-                                    <span class="info">I agree to the <a href="#" target="_blank">terms and conditions</a> and <a href="#" target="_blank">privacy policy</a>.</span>
+                            </div>
+                            <div class="form-group w-100">
+                                <label for="card2"> Name on the Card</label>
+                                <input type="text" id="card2">
+                            </div>
+                            <div class="form-group">
+                                <label for="card3">Expiration</label>
+                                <input type="text" id="card3" placeholder="MM/YY">
+                            </div>
+                            <div class="form-group">
+                                <label for="card4">CVV</label>
+                                <input type="text" id="card4" placeholder="CVV">
+                            </div>
+                            <div class="form-group check-group">
+                                <input id="card5" type="checkbox" checked>
+                                <label for="card5">
+                                    <span class="title">QuickPay</span>
+                                    <span class="info">Save this card information to my Boleto  account and make faster payments.</span>
                                 </label>
                             </div>
-                            {% if payment_form.terms_accepted.errors %}
-                                <div class="alert alert-danger">{{ payment_form.terms_accepted.errors.0 }}</div>
-                            {% endif %}
-            </div>
-            
-                <div class="form-group">
-                            <button type="submit" class="custom-button w-100" id="submitBtn">
-                                <i class="fas fa-lock"></i> Complete Payment - $<span id="finalAmount">{{ total_amount|floatformat:2 }}</span>
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-
-            <!-- Right Column - Summary -->
-            <div class="col-lg-4">
-                <div class="booking-summary">
-                    <h4><i class="fas fa-ticket-alt"></i> Booking Summary</h4>
-                    
-                    <div class="summary-item">
-                        <div>
-                            <h6 class="subtitle">{{ event.name }}</h6>
-                            <span class="info">{{ event.location }}</span>
-                        </div>
-                    </div>
-                    
-                    <div class="summary-item">
-                        <div>
-                            <h6 class="subtitle">
-                                <span>{{ ticket.seat.row.name }} - Seat {{ ticket.seat.number }}</span>
-                            </h6>
-                            <div class="info">
-                                <span>{{ event.date|date:"d M Y, g:i A" }}</span>
-                </div>
-                </div>
-            </div>
-            
-                    <div class="summary-item">
-                        <h6 class="subtitle">Ticket Price</h6>
-                        <span class="info">${{ ticket.price|floatformat:2 }}</span>
-                    </div>
-                    
-                    <div class="summary-item">
-                        <h6 class="subtitle">Tax (15%)</h6>
-                        <span class="info">${{ tax_amount|floatformat:2 }}</span>
-                    </div>
-                    
-                    <div class="summary-item" id="discountRow" style="display: none;">
-                        <h6 class="subtitle">Discount</h6>
-                        <span class="info text-success">-$<span id="discountAmount">0.00</span></span>
-            </div>
-            
-            <div class="total-amount">
-                        <h6 class="subtitle">
-                            <span>Total Amount</span>
-                            <span class="text-primary">$<span id="summaryTotal">{{ total_amount|floatformat:2 }}</span></span>
-                        </h6>
+                            <div class="form-group">
+                                <input type="submit" class="custom-button" value="make payment">
+                            </div>
+                        </form>
+                        <p class="notice">
+                            By Clicking "Make Payment" you agree to the <a href="#0">terms and conditions</a>
+                        </p>
                     </div>
                 </div>
-
-                <!-- Coupon Section -->
-                <div class="coupon-section">
-                    <h6><i class="fas fa-tag"></i> Have a Coupon?</h6>
-                    <form id="couponForm" class="coupon-form">
-                        {% csrf_token %}
-                        {{ coupon_form.coupon_code }}
-                        <button type="submit" class="custom-button">Apply</button>
-                    </form>
-                    <div id="couponMessage"></div>
-            </div>
-            
-                <!-- Security Notice -->
-                <div class="alert alert-info">
-                    <i class="fas fa-shield-alt"></i>
-                    <strong>Secure Payment:</strong> Your payment information is encrypted and secure.
+                <div class="col-lg-4">
+                    <div class="booking-summery bg-one">
+                        <h4 class="title">booking summery</h4>
+                        <ul>
+                            <li>
+                                <h6 class="subtitle">Venus</h6>
+                                <span class="info">English-2d</span>
+                            </li>
+                            <li>
+                                <h6 class="subtitle"><span>City Walk</span><span>02</span></h6>
+                                <div class="info"><span>10 SEP TUE, 11:00 PM</span> <span>Tickets</span></div>
+                            </li>
+                            <li>
+                                <h6 class="subtitle mb-0"><span>Tickets  Price</span><span>$150</span></h6>
+                            </li>
+                        </ul>
+                        <ul class="side-shape">
+                            <li>
+                                <h6 class="subtitle"><span>combos</span><span>$57</span></h6>
+                                <span class="info"><span>2 Nachos Combo</span></span>
+                            </li>
+                            <li>
+                                <h6 class="subtitle"><span>food & bevarage</span></h6>
+                            </li>
+                        </ul>
+                        <ul>
+                            <li>
+                                <span class="info"><span>price</span><span>$207</span></span>
+                                <span class="info"><span>vat</span><span>$15</span></span>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="proceed-area  text-center">
+                        <h6 class="subtitle"><span>Amount Payable</span><span>$222</span></h6>
+                        <a href="#0" class="custom-button back-button">proceed</a>
+                    </div>
                 </div>
-            </div>
-        </div>
-            </div>
-    </div>
-    
-<!-- Loading Modal -->
-<div class="modal fade" id="loadingModal" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="modal-body text-center p-4">
-                <div class="spinner-border text-primary mb-3" role="status">
-                    <span class="sr-only">Processing...</span>
-                </div>
-                <h5>Processing Payment...</h5>
-                <p class="text-muted">Please wait while we process your payment.</p>
             </div>
         </div>
     </div>
-</div>
+    <!-- ==========Event-Section========== -->
+
 {% endblock %}
-
-{% block extra_js %}
-    <script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Initialize variables
-    let countdown = 300; // 5 minutes in seconds
-    let countdownInterval;
-    
-    // Start countdown
-    startCountdown();
-    
-        // Payment method selection
-    const paymentMethods = document.querySelectorAll('.payment-option li');
-    const cardFields = document.getElementById('cardFields');
-    const paypalFields = document.getElementById('paypalFields');
-    const paymentMethodInput = document.getElementById('paymentMethod');
-            
-            paymentMethods.forEach(method => {
-                method.addEventListener('click', function() {
-            // Remove active class from all methods
-            paymentMethods.forEach(m => m.classList.remove('active'));
-            // Add active class to clicked method
-            this.classList.add('active');
-            
-            // Update hidden input
-            const methodType = this.dataset.method;
-            paymentMethodInput.value = methodType;
-            
-            // Show/hide appropriate fields
-            if (methodType === 'paypal') {
-                cardFields.classList.remove('show');
-                paypalFields.classList.add('show');
-            } else {
-                cardFields.classList.add('show');
-                paypalFields.classList.remove('show');
-            }
-        });
-    });
-    
-    // Coupon form submission
-    const couponForm = document.getElementById('couponForm');
-    const couponMessage = document.getElementById('couponMessage');
-    
-    couponForm.addEventListener('submit', function(e) {
-        e.preventDefault();
-        
-        const couponCode = document.querySelector('#{{ coupon_form.coupon_code.id_for_label }}').value.trim();
-        if (!couponCode) {
-            showCouponMessage('Please enter a coupon code.', 'danger');
-            return;
-        }
-        
-        // Show loading state
-        const submitBtn = couponForm.querySelector('button');
-        const originalText = submitBtn.textContent;
-        submitBtn.textContent = 'Applying...';
-        submitBtn.disabled = true;
-        
-        // Send AJAX request
-        fetch('{% url "apply_coupon" %}', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
-                'X-Requested-With': 'XMLHttpRequest'
-            },
-            body: `coupon_code=${encodeURIComponent(couponCode)}`
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                showCouponMessage(data.message, 'success');
-                updatePricing(data.discount_amount, data.total_amount);
-                document.querySelector('#{{ coupon_form.coupon_code.id_for_label }}').value = '';
-            } else {
-                showCouponMessage(data.error, 'danger');
-            }
-        })
-        .catch(error => {
-            showCouponMessage('An error occurred. Please try again.', 'danger');
-        })
-        .finally(() => {
-            submitBtn.textContent = originalText;
-            submitBtn.disabled = false;
-                });
-            });
-            
-    // Main form submission
-    const mainForm = document.getElementById('paymentForm');
-    const contactForm = document.getElementById('contactForm');
-    
-    mainForm.addEventListener('submit', function(e) {
-        e.preventDefault();
-        
-        // Validate contact form
-        if (!validateContactForm()) {
-            return;
-        }
-        
-        // Validate payment form
-        if (!validatePaymentForm()) {
-            return;
-        }
-        
-        // Show loading modal
-        $('#loadingModal').modal('show');
-        
-        // Submit both forms
-        submitForms();
-    });
-    
-    // Form validation functions
-    function validateContactForm() {
-        const requiredFields = ['full_name', 'email', 'phone'];
-        let isValid = true;
-        
-        requiredFields.forEach(fieldName => {
-            const field = document.querySelector(`[name="${fieldName}"]`);
-            if (!field.value.trim()) {
-                showFieldError(field, 'This field is required.');
-                isValid = false;
-            } else {
-                clearFieldError(field);
-            }
-        });
-        
-        return isValid;
-    }
-    
-    function validatePaymentForm() {
-        const paymentMethod = document.getElementById('paymentMethod').value;
-        let isValid = true;
-        
-        if (paymentMethod !== 'paypal') {
-            const cardFields = ['card_number', 'card_holder_name', 'expiry_date', 'cvv'];
-            cardFields.forEach(fieldName => {
-                const field = document.querySelector(`[name="${fieldName}"]`);
-                if (!field.value.trim()) {
-                    showFieldError(field, 'This field is required.');
-                    isValid = false;
-                } else {
-                    clearFieldError(field);
-                }
-            });
-        }
-        
-        const termsAccepted = document.getElementById('{{ payment_form.terms_accepted.id_for_label }}').checked;
-        if (!termsAccepted) {
-            showCouponMessage('Please accept the terms and conditions.', 'danger');
-            isValid = false;
-        }
-        
-        return isValid;
-    }
-    
-    function showFieldError(field, message) {
-        clearFieldError(field);
-        const errorDiv = document.createElement('div');
-        errorDiv.className = 'alert alert-danger mt-2';
-        errorDiv.textContent = message;
-        field.parentNode.appendChild(errorDiv);
-    }
-    
-    function clearFieldError(field) {
-        const errorDiv = field.parentNode.querySelector('.alert-danger');
-        if (errorDiv) {
-            errorDiv.remove();
-        }
-    }
-    
-    function submitForms() {
-        // Combine form data
-        const formData = new FormData();
-        
-        // Add contact form data
-        const contactData = new FormData(contactForm);
-        for (let [key, value] of contactData.entries()) {
-            formData.append(key, value);
-        }
-        
-        // Add payment form data
-        const paymentData = new FormData(mainForm);
-        for (let [key, value] of paymentData.entries()) {
-            formData.append(key, value);
-        }
-        
-        // Submit to checkout view
-        fetch(window.location.href, {
-            method: 'POST',
-            body: formData
-        })
-        .then(response => {
-            if (response.redirected) {
-                window.location.href = response.url;
-            } else {
-                return response.text();
-            }
-        })
-        .then(html => {
-            if (html) {
-                // Replace page content with response
-                document.documentElement.innerHTML = html;
-            }
-        })
-        .catch(error => {
-            $('#loadingModal').modal('hide');
-            showCouponMessage('An error occurred during checkout. Please try again.', 'danger');
-        });
-    }
-    
-    // Coupon message display
-    function showCouponMessage(message, type) {
-        couponMessage.innerHTML = `<div class="alert alert-${type}">${message}</div>`;
-        setTimeout(() => {
-            couponMessage.innerHTML = '';
-        }, 5000);
-    }
-    
-    // Update pricing display
-    function updatePricing(discountAmount, totalAmount) {
-        const discountRow = document.getElementById('discountRow');
-        const discountAmountSpan = document.getElementById('discountAmount');
-        const summaryTotal = document.getElementById('summaryTotal');
-        const finalAmount = document.getElementById('finalAmount');
-        
-        if (discountAmount > 0) {
-            discountRow.style.display = 'flex';
-            discountAmountSpan.textContent = discountAmount.toFixed(2);
-        } else {
-            discountRow.style.display = 'none';
-        }
-        
-        summaryTotal.textContent = totalAmount.toFixed(2);
-        finalAmount.textContent = totalAmount.toFixed(2);
-    }
-    
-    // Countdown timer
-    function startCountdown() {
-        countdownInterval = setInterval(() => {
-            countdown--;
-            const minutes = Math.floor(countdown / 60);
-            const seconds = countdown % 60;
-            
-            document.getElementById('countdown').textContent = 
-                `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-            
-            if (countdown <= 0) {
-                clearInterval(countdownInterval);
-                alert('Session expired. Please refresh the page to continue.');
-                window.location.reload();
-            }
-        }, 1000);
-    }
-    
-    // Auto-format card number
-    const cardNumberInput = document.getElementById('{{ payment_form.card_number.id_for_label }}');
-    if (cardNumberInput) {
-        cardNumberInput.addEventListener('input', function(e) {
-            let value = e.target.value.replace(/\s+/g, '').replace(/[^0-9]/gi, '');
-            let formattedValue = value.match(/.{1,4}/g)?.join(' ') || '';
-            e.target.value = formattedValue;
-        });
-    }
-    
-    // Auto-format expiry date
-    const expiryInput = document.getElementById('{{ payment_form.expiry_date.id_for_label }}');
-    if (expiryInput) {
-        expiryInput.addEventListener('input', function(e) {
-            let value = e.target.value.replace(/\D/g, '');
-            if (value.length >= 2) {
-                value = value.substring(0, 2) + '/' + value.substring(2, 4);
-            }
-            e.target.value = value;
-        });
-    }
-    
-    // Auto-format CVV
-    const cvvInput = document.getElementById('{{ payment_form.cvv.id_for_label }}');
-    if (cvvInput) {
-        cvvInput.addEventListener('input', function(e) {
-            e.target.value = e.target.value.replace(/\D/g, '');
-        });
-    }
-    
-    // Cleanup on page unload
-    window.addEventListener('beforeunload', function() {
-        if (countdownInterval) {
-            clearInterval(countdownInterval);
-        }
-            });
-        });
-    </script>
-{% endblock %}  
