@@ -10,6 +10,9 @@ from .models import Event, SeatRow, Seat, Ticket, Payment, Coupon, Category
 from django.core.paginator import Paginator
 from datetime import datetime
 from .forms import ContactDetailsForm, PaymentForm, CouponForm
+from django.conf import settings
+from django.urls import reverse
+import stripe
 
 def event_list(request):
     qs = Event.objects.all()
@@ -132,6 +135,10 @@ def checkout(request, ticket_id):
     payment_form = PaymentForm()
     coupon_form = CouponForm()
     
+    # Initialize Stripe
+    stripe.api_key = settings.STRIPE_SECRET_KEY
+    stripe_publishable_key = settings.STRIPE_PUBLISHABLE_KEY
+    
     # Calculate initial amounts
     subtotal = ticket.price
     discount_amount = Decimal('0.00')
@@ -175,27 +182,48 @@ def checkout(request, ticket_id):
     # Handle form submission
     if request.method == 'POST':
         contact_form = ContactDetailsForm(request.POST)
-        payment_form = PaymentForm(request.POST)
+        payment_method_id = request.POST.get('payment_method_id')
         
-        if contact_form.is_valid() and payment_form.is_valid():
+        if contact_form.is_valid() and payment_method_id:
             try:
-                with transaction.atomic():
-                    # Mark seat as booked
-                    ticket.seat.is_booked = True
-                    ticket.seat.save()
-                    
-                    # Update ticket with user (if user is logged in)
-                    if request.user.is_authenticated:
-                        ticket.user = request.user
-                        ticket.save()
-                    
-                    # Create payment record
-                    payment = Payment.objects.create(
-                        user=request.user if request.user.is_authenticated else None,
-                        amount=request.session.get('checkout_total_amount', float(total_amount)),
-                        status='completed'
-                    )
-                    payment.tickets.add(ticket)
+                # Get amount in cents (Stripe requires amount in smallest currency unit)
+                amount_cents = int(float(request.session.get('checkout_total_amount', float(total_amount))) * 100)
+                
+                # Create a payment intent
+                intent = stripe.PaymentIntent.create(
+                    amount=amount_cents,
+                    currency='usd',
+                    payment_method=payment_method_id,
+                    confirm=True,
+                    return_url=request.build_absolute_uri(reverse('booking_confirmation')),
+                    description=f"Ticket for {ticket.seat.row.event.name}",
+                    metadata={
+                        'ticket_id': ticket.id,
+                        'event_name': ticket.seat.row.event.name,
+                        'seat': ticket.seat.name
+                    }
+                )
+                
+                # Check if payment succeeded
+                if intent.status == 'succeeded' or intent.status == 'requires_capture':
+                    with transaction.atomic():
+                        # Mark seat as booked
+                        ticket.seat.is_booked = True
+                        ticket.seat.save()
+                        
+                        # Update ticket with user (if user is logged in)
+                        if request.user.is_authenticated:
+                            ticket.user = request.user
+                            ticket.save()
+                        
+                        # Create payment record
+                        payment = Payment.objects.create(
+                            user=request.user if request.user.is_authenticated else None,
+                            amount=request.session.get('checkout_total_amount', float(total_amount)),
+                            status='completed',
+                            stripe_payment_id=intent.id
+                        )
+                        payment.tickets.add(ticket)
                     
                     # Store contact details in session for confirmation
                     request.session['checkout_contact'] = {
@@ -221,7 +249,7 @@ def checkout(request, ticket_id):
     
     return render(request, 'checkout.html', {
         'ticket': ticket,
-        'event': event,
+        'event': ticket.seat.row.event,
         'contact_form': contact_form,
         'payment_form': payment_form,
         'coupon_form': coupon_form,
@@ -229,6 +257,7 @@ def checkout(request, ticket_id):
         'tax_amount': tax_amount,
         'discount_amount': discount_amount,
         'total_amount': total_amount,
+        'stripe_publishable_key': stripe_publishable_key,
     })
 
 

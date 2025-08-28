@@ -1,5 +1,64 @@
 {% extends 'base.html' %}
 
+{% block extra_css %}
+<style>
+    .countdown-timer {
+        font-size: 16px;
+        margin-top: 10px;
+        color: #333;
+    }
+    
+    .countdown-number {
+        display: inline-block;
+        background-color: #3498db;
+        color: white;
+        border-radius: 4px;
+        padding: 4px 8px;
+        margin: 0 2px;
+        font-weight: bold;
+        min-width: 30px;
+        text-align: center;
+    }
+    
+    .stripe-element {
+        background-color: white;
+        padding: 10px 12px;
+        border-radius: 4px;
+        border: 1px solid #e0e0e0;
+        box-shadow: 0 1px 3px 0 #e6ebf1;
+        -webkit-transition: box-shadow 150ms ease;
+        transition: box-shadow 150ms ease;
+    }
+    
+    .stripe-element--focus {
+        box-shadow: 0 1px 3px 0 #cfd7df;
+    }
+    
+    .stripe-element--invalid {
+        border-color: #fa755a;
+    }
+    
+    .proceed-btn {
+        position: relative;
+    }
+    
+    .spinner-border {
+        width: 1rem;
+        height: 1rem;
+        margin-left: 0.5rem;
+        vertical-align: middle;
+        border: 0.2em solid currentColor;
+        border-right-color: transparent;
+        border-radius: 50%;
+        animation: spinner-border .75s linear infinite;
+    }
+    
+    @keyframes spinner-border {
+        to { transform: rotate(360deg); }
+    }
+</style>
+{% endblock %}
+
 {% block content %}
     <!-- ==========Banner-Section========== -->
     <section class="details-banner event-details-banner hero-area bg_img seat-plan-banner" data-background="https://pixner.net/boleto/demo/assets/images/banner/banner07.jpg">
@@ -31,7 +90,7 @@
                 </div>
                 <div class="item">
                     <h5 class="title">{{ event.date|time:"g:i A" }}</h5>
-                    {% comment %} <p>Mins Left</p> {% endcomment %}
+                    <p id="countdown" class="countdown-timer">Time Left: <span id="days" class="countdown-number"></span>d <span id="hours" class="countdown-number"></span>h <span id="minutes" class="countdown-number"></span>m <span id="seconds" class="countdown-number"></span>s</p>
                 </div>
             </div>
         </div>
@@ -102,39 +161,42 @@
                             </li>
                         </ul>
                         <h6 class="subtitle">Enter Your Card Details </h6>
-                        <form class="payment-card-form">
+                        <form class="payment-card-form" id="paymentForm">
                             <div class="form-group w-100">
-                                <label for="card1">Card Details</label>
-                                <input type="text" id="card1">
-                                <div class="right-icon">
-                                    <i class="flaticon-lock"></i>
+                                <label for="card-element">Credit or debit card</label>
+                                <div id="card-element" class="form-control stripe-element">
+                                    <!-- Stripe Elements will be inserted here -->
                                 </div>
+                                <div id="card-errors" class="text-danger mt-2" role="alert"></div>
                             </div>
                             <div class="form-group w-100">
-                                <label for="card2"> Name on the Card</label>
-                                <input type="text" id="card2">
-                            </div>
-                            <div class="form-group">
-                                <label for="card3">Expiration</label>
-                                <input type="text" id="card3" placeholder="MM/YY">
-                            </div>
-                            <div class="form-group">
-                                <label for="card4">CVV</label>
-                                <input type="text" id="card4" placeholder="CVV">
+                                <label for="card-name">Name on the Card</label>
+                                <input type="text" id="card-name" name="card_name" required>
                             </div>
                             <div class="form-group check-group">
-                                <input id="card5" type="checkbox" checked>
+                                <input id="card5" type="checkbox" name="save_card" checked>
                                 <label for="card5">
                                     <span class="title">QuickPay</span>
-                                    <span class="info">Save this card information to my Boleto  account and make faster payments.</span>
+                                    <span class="info">Save this card information to my account for faster payments.</span>
                                 </label>
                             </div>
-                            <div class="form-group">
-                                <input type="submit" class="custom-button" value="make payment">
-                            </div>
+                            <input type="hidden" name="payment_method_id" id="payment_method_id">
+                            <input type="hidden" name="stripe_token" id="stripe_token">
+                            <!-- Payment form doesn't need its own submit button as we're using the proceed button -->
                         </form>
-                        <p class="notice">
-                            By Clicking "Make Payment" you agree to the <a href="#0">terms and conditions</a>
+                        <!-- Coupon Code Section -->
+                        <div class="coupon-section mt-4">
+                            <h6 class="subtitle">Have a Coupon Code?</h6>
+                            <form id="couponForm" class="d-flex">
+                                <div class="form-group w-75 mr-2">
+                                    <input type="text" id="couponCode" name="coupon_code" placeholder="Enter coupon code">
+                                </div>
+                                <button type="button" id="applyCoupon" class="custom-button">Apply</button>
+                            </form>
+                            <div id="couponMessage" class="mt-2"></div>
+                        </div>
+                        <p class="notice mt-3">
+                            By clicking "Proceed" you agree to the <a href="#0">terms and conditions</a>
                         </p>
                     </div>
                 </div>
@@ -143,36 +205,43 @@
                         <h4 class="title">booking summery</h4>
                         <ul>
                             <li>
-                                <h6 class="subtitle">Venus</h6>
-                                <span class="info">English-2d</span>
+                                <h6 class="subtitle">{{ event.name }}</h6>
+                                <span class="info">{{ event.location }}</span>
                             </li>
                             <li>
-                                <h6 class="subtitle"><span>City Walk</span><span>02</span></h6>
-                                <div class="info"><span>10 SEP TUE, 11:00 PM</span> <span>Tickets</span></div>
+                                <h6 class="subtitle"><span>{{ ticket.seat.row.name }}</span><span>Seat {{ ticket.seat.number }}</span></h6>
+                                <div class="info"><span>{{ event.date|date:"d M D, g:i A" }}</span> <span>Ticket</span></div>
                             </li>
                             <li>
-                                <h6 class="subtitle mb-0"><span>Tickets  Price</span><span>$150</span></h6>
+                                <h6 class="subtitle mb-0"><span>Ticket Price</span><span>${{ ticket.price }}</span></h6>
                             </li>
                         </ul>
                         <ul class="side-shape">
                             <li>
-                                <h6 class="subtitle"><span>combos</span><span>$57</span></h6>
-                                <span class="info"><span>2 Nachos Combo</span></span>
+                                <h6 class="subtitle"><span>Tax (15%)</span><span>${{ tax_amount }}</span></h6>
                             </li>
+                            {% if discount_amount > 0 %}
                             <li>
-                                <h6 class="subtitle"><span>food & bevarage</span></h6>
+                                <h6 class="subtitle"><span>Discount</span><span>-${{ discount_amount }}</span></h6>
                             </li>
+                            {% endif %}
                         </ul>
                         <ul>
                             <li>
-                                <span class="info"><span>price</span><span>$207</span></span>
-                                <span class="info"><span>vat</span><span>$15</span></span>
+                                <span class="info"><span>Subtotal</span><span>${{ subtotal }}</span></span>
+                                <span class="info"><span>Tax</span><span>${{ tax_amount }}</span></span>
+                                {% if discount_amount > 0 %}
+                                <span class="info"><span>Discount</span><span>-${{ discount_amount }}</span></span>
+                                {% endif %}
                             </li>
                         </ul>
                     </div>
-                    <div class="proceed-area  text-center">
-                        <h6 class="subtitle"><span>Amount Payable</span><span>$222</span></h6>
-                        <a href="#0" class="custom-button back-button">proceed</a>
+                    <div class="proceed-area text-center">
+                        <h6 class="subtitle"><span>Amount Payable</span><span>${{ total_amount }}</span></h6>
+                        <button type="submit" form="contactForm" class="custom-button back-button proceed-btn">
+                            <span class="button-text">proceed</span>
+                            <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -180,4 +249,291 @@
     </div>
     <!-- ==========Event-Section========== -->
 
+{% endblock %}
+
+{% block extra_js %}
+<!-- Stripe JS -->
+<script src="https://js.stripe.com/v3/"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Countdown Timer
+        const eventDate = new Date("{{ event.date|date:'Y-m-d H:i:s' }}").getTime();
+        const daysElement = document.getElementById('days');
+        const hoursElement = document.getElementById('hours');
+        const minutesElement = document.getElementById('minutes');
+        const secondsElement = document.getElementById('seconds');
+        const countdownElement = document.getElementById('countdown');
+        
+        // Update the countdown every second
+        const countdownTimer = setInterval(function() {
+            // Get current date and time
+            const now = new Date().getTime();
+            
+            // Find the time difference between now and the event date
+            const timeDifference = eventDate - now;
+            
+            // Time calculations for days, hours, minutes and seconds
+            const days = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((timeDifference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((timeDifference % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((timeDifference % (1000 * 60)) / 1000);
+            
+            // Display the result
+            daysElement.textContent = days;
+            hoursElement.textContent = hours;
+            minutesElement.textContent = minutes;
+            secondsElement.textContent = seconds;
+            
+            // If the countdown is over, display a message
+            if (timeDifference < 0) {
+                clearInterval(countdownTimer);
+                countdownElement.innerHTML = "<span class='text-danger'>Event has started!</span>";
+            }
+        }, 1000);
+        
+        // Initialize Stripe
+        const stripe = Stripe('{{ stripe_publishable_key }}');
+        
+        // Create an instance of Elements with custom styling
+        const elements = stripe.elements({
+            fonts: [
+                {
+                    cssSrc: 'https://fonts.googleapis.com/css?family=Roboto:400,500,700',
+                },
+            ],
+        });
+        
+        // Create an instance of the card Element with enhanced styling
+        const cardElement = elements.create('card', {
+            style: {
+                base: {
+                    color: '#32325d',
+                    fontFamily: '"Roboto", sans-serif',
+                    fontSmoothing: 'antialiased',
+                    fontSize: '16px',
+                    '::placeholder': {
+                        color: '#aab7c4'
+                    }
+                },
+                invalid: {
+                    color: '#fa755a',
+                    iconColor: '#fa755a'
+                }
+            }
+        });
+        
+        // Add an instance of the card Element into the `card-element` div
+        cardElement.mount('#card-element');
+        
+        // Handle real-time validation errors from the card Element
+        cardElement.addEventListener('change', function(event) {
+            const displayError = document.getElementById('card-errors');
+            if (event.error) {
+                displayError.textContent = event.error.message;
+            } else {
+                displayError.textContent = '';
+            }
+        });
+        
+        // Handle focus and blur events for styling
+        cardElement.addEventListener('focus', function() {
+            document.getElementById('card-element').classList.add('stripe-element--focus');
+        });
+        
+        cardElement.addEventListener('blur', function() {
+            document.getElementById('card-element').classList.remove('stripe-element--focus');
+        });
+        
+        // Add invalid class when validation fails
+        cardElement.addEventListener('change', function(event) {
+            if (event.error) {
+                document.getElementById('card-element').classList.add('stripe-element--invalid');
+            } else {
+                document.getElementById('card-element').classList.remove('stripe-element--invalid');
+            }
+        });
+        
+        // Handle form submission
+        const form = document.getElementById('paymentForm');
+        const proceedButton = document.querySelector('.proceed-btn');
+        
+        if (proceedButton) {
+            proceedButton.addEventListener('click', function(event) {
+                event.preventDefault();
+                
+                // Disable the submit button to prevent repeated clicks
+                proceedButton.disabled = true;
+                
+                // Show loading state
+                const buttonText = proceedButton.querySelector('.button-text');
+                const spinner = proceedButton.querySelector('.spinner-border');
+                buttonText.textContent = 'Processing...';
+                spinner.classList.remove('d-none');
+                
+                const cardName = document.getElementById('card-name').value;
+                if (!cardName) {
+                    document.getElementById('card-errors').textContent = 'Please enter the name on the card.';
+                    proceedButton.disabled = false;
+                    // Reset button state
+                    buttonText.textContent = 'proceed';
+                    spinner.classList.add('d-none');
+                    return;
+                }
+                
+                // Create a token or payment method
+                stripe.createPaymentMethod({
+                    type: 'card',
+                    card: cardElement,
+                    billing_details: {
+                        name: cardName
+                    }
+                }).then(function(result) {
+                    if (result.error) {
+                        // Show error to your customer
+                        const errorElement = document.getElementById('card-errors');
+                        errorElement.textContent = result.error.message;
+                        proceedButton.disabled = false;
+                        // Reset button state
+                        buttonText.textContent = 'proceed';
+                        spinner.classList.add('d-none');
+                    } else {
+                        // Send the payment method ID to your server
+                        document.getElementById('payment_method_id').value = result.paymentMethod.id;
+                        
+                        // Submit the form
+                        const contactForm = document.getElementById('contactForm');
+                        if (contactForm.checkValidity()) {
+                            // Create a hidden form to submit all data
+                            const hiddenForm = document.createElement('form');
+                            hiddenForm.method = 'POST';
+                            hiddenForm.action = window.location.href;
+                            hiddenForm.style.display = 'none';
+                            
+                            // Add CSRF token
+                            const csrfToken = document.createElement('input');
+                            csrfToken.type = 'hidden';
+                            csrfToken.name = 'csrfmiddlewaretoken';
+                            csrfToken.value = '{{ csrf_token }}';
+                            hiddenForm.appendChild(csrfToken);
+                            
+                            // Add payment method ID
+                            const paymentMethodInput = document.createElement('input');
+                            paymentMethodInput.type = 'hidden';
+                            paymentMethodInput.name = 'payment_method_id';
+                            paymentMethodInput.value = result.paymentMethod.id;
+                            hiddenForm.appendChild(paymentMethodInput);
+                            
+                            // Add contact form data
+                            const contactFormData = new FormData(contactForm);
+                            for (const [key, value] of contactFormData.entries()) {
+                                const input = document.createElement('input');
+                                input.type = 'hidden';
+                                input.name = key;
+                                input.value = value;
+                                hiddenForm.appendChild(input);
+                            }
+                            
+                            // Add save card preference
+                            const saveCardInput = document.createElement('input');
+                            saveCardInput.type = 'hidden';
+                            saveCardInput.name = 'save_card';
+                            saveCardInput.value = document.getElementById('card5').checked ? 'on' : 'off';
+                            hiddenForm.appendChild(saveCardInput);
+                            
+                            // Submit the form
+                            document.body.appendChild(hiddenForm);
+                            hiddenForm.submit();
+                        } else {
+                            alert('Please fill out all required contact details.');
+                            proceedButton.disabled = false;
+                            // Reset button state
+                            buttonText.textContent = 'proceed';
+                            spinner.classList.add('d-none');
+                        }
+                    }
+                }).catch(function(error) {
+                    console.error('Payment error:', error);
+                    document.getElementById('card-errors').textContent = 'An unexpected error occurred. Please try again.';
+                    proceedButton.disabled = false;
+                    // Reset button state
+                    buttonText.textContent = 'proceed';
+                    spinner.classList.add('d-none');
+                });
+            });
+        }
+        
+        // Handle coupon code application
+        const couponForm = document.getElementById('couponForm');
+        const applyCouponBtn = document.getElementById('applyCoupon');
+        const couponMessageDiv = document.getElementById('couponMessage');
+        
+        applyCouponBtn.addEventListener('click', function() {
+            const couponCode = document.getElementById('couponCode').value;
+            if (!couponCode) {
+                couponMessageDiv.innerHTML = '<div class="alert alert-danger">Please enter a coupon code</div>';
+                return;
+            }
+            
+            // Send AJAX request to apply coupon
+            const formData = new FormData();
+            formData.append('coupon_code', couponCode);
+            formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+            
+            fetch('{% url "apply_coupon" %}', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Update the UI with new amounts
+                    couponMessageDiv.innerHTML = `<div class="alert alert-success">${data.message}</div>`;
+                    
+                    // Update discount and total in the booking summary
+                    document.querySelectorAll('.booking-summery .side-shape li').forEach(item => {
+                        if (item.textContent.includes('Discount')) {
+                            item.querySelector('span:last-child').textContent = `-$${data.discount_amount.toFixed(2)}`;
+                        }
+                    });
+                    
+                    // Update the total amount
+                    document.querySelector('.proceed-area .subtitle span:last-child').textContent = `$${data.total_amount.toFixed(2)}`;
+                    
+                    // Add discount line if it doesn't exist
+                    const sideShapeUl = document.querySelector('.booking-summery .side-shape');
+                    if (!sideShapeUl.textContent.includes('Discount')) {
+                        const discountLi = document.createElement('li');
+                        discountLi.innerHTML = `<h6 class="subtitle"><span>Discount</span><span>-$${data.discount_amount.toFixed(2)}</span></h6>`;
+                        sideShapeUl.appendChild(discountLi);
+                    }
+                    
+                    // Add discount line to the summary section if it doesn't exist
+                    const summaryUl = document.querySelector('.booking-summery ul:last-child li');
+                    if (!summaryUl.textContent.includes('Discount')) {
+                        const discountSpan = document.createElement('span');
+                        discountSpan.className = 'info';
+                        discountSpan.innerHTML = `<span>Discount</span><span>-$${data.discount_amount.toFixed(2)}</span>`;
+                        summaryUl.appendChild(discountSpan);
+                    } else {
+                        // Update existing discount line
+                        summaryUl.querySelectorAll('.info').forEach(info => {
+                            if (info.textContent.includes('Discount')) {
+                                info.querySelector('span:last-child').textContent = `-$${data.discount_amount.toFixed(2)}`;
+                            }
+                        });
+                    }
+                } else {
+                    couponMessageDiv.innerHTML = `<div class="alert alert-danger">${data.error}</div>`;
+                }
+            })
+            .catch(error => {
+                couponMessageDiv.innerHTML = '<div class="alert alert-danger">An error occurred. Please try again.</div>';
+                console.error('Error:', error);
+            });
+        });
+    });
+</script>
 {% endblock %}
