@@ -1,0 +1,299 @@
+{% extends 'base.html' %}
+{% block title %}SeatScape - Home{% endblock %}
+{% block nav_home_active %}active{% endblock %}
+{% block content %}
+
+   <!-- ==========Banner-Section========== -->
+   <section class="banner-section">
+    <div class="banner-bg bg_img bg-fixed" data-background="https://pixner.net/boleto/demo/assets/images/banner/banner01.jpg"></div>
+    <div class="container">
+        <div class="banner-content">
+            <h1 class="title  cd-headline clip"><span class="d-block">book your</span> tickets for 
+                <span class="color-theme cd-words-wrapper p-0 m-0">
+                    <b class="is-visible">Event</b>
+                    <b>Sports</b>
+                    <b>Workshops</b>
+                </span>
+            </h1>
+            <p>Safe, secure, reliable ticketing.Your ticket to live entertainment!</p>
+        </div>
+    </div>
+</section>
+<!-- ==========Banner-Section========== -->
+
+<!-- ==========Ticket-Search========== -->
+<section class="search-ticket-section padding-top pt-lg-0">
+    <div class="container">
+        <div class="search-tab bg_img" data-background="https://pixner.net/boleto/demo/assets/images/ticket/ticket-bg01.jpg">
+            <div class="row align-items-center mb--20">
+                <div class="col-lg-6 mb-20">
+                    <div class="search-ticket-header">
+                        <h6 class="category">welcome to Boleto </h6>
+                        <h3 class="title">what are you looking for</h3>
+                    </div>
+                </div>
+                <div class="col-lg-6 mb-20">
+                    <ul class="tab-menu ticket-tab-menu">
+                                            {% for cat, events in categories_with_events %}
+                                            <li {% if forloop.first %}class="active"{% endif %}>
+                                                <div class="tab-thumb">
+                                                    <img src="https://pixner.net/boleto/demo/assets/images/ticket/ticket-tab01.png" alt="ticket">
+                                                </div>
+                                                <span>{{ cat.name }}</span>
+                                            </li>
+                                            {% endfor %}
+                                        </ul>
+                </div>
+            </div>
+            <div class="tab-area">
+                {% for cat, events in categories_with_events %}
+                <div class="tab-item {% if forloop.first %}active{% endif %}">
+                    <form class="ticket-search-form">
+                        <div class="form-group large">
+                            <input type="text" placeholder="Search for {{ cat.name }} Events">
+                            <button type="submit"><i class="fas fa-search"></i></button>
+                        </div>
+                        <div class="form-group">
+                            <div class="thumb">
+                                <img src="https://pixner.net/boleto/demo/assets/images/ticket/city.png" alt="ticket">
+                            </div>
+                            <span class="type">city</span>
+                            <select class="select-bar">
+                                <option value="london">London</option>
+                                <option value="dhaka">dhaka</option>
+                                <option value="rosario">rosario</option>
+                                <option value="madrid">madrid</option>
+                                <option value="koltaka">kolkata</option>
+                                <option value="rome">rome</option>
+                                <option value="khoksa">khoksa</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <div class="thumb">
+                                <img src="https://pixner.net/boleto/demo/assets/images/ticket/date.png" alt="ticket">
+                            </div>
+                            <span class="type">date</span>
+                            <select class="select-bar">
+                                <option value="26-12-19">23/10/2019</option>
+                                <option value="26-12-19">24/10/2019</option>
+                                <option value="26-12-19">25/10/2019</option>
+                                <option value="26-12-19">26/10/2019</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <div class="thumb">
+                                <img src="https://pixner.net/boleto/demo/assets/images/ticket/cinema.png" alt="ticket">
+                            </div>
+                            <span class="type">event</span>
+                            <select class="select-bar">
+                                {% for event in events %}
+                                <option value="{{ event.id }}">{{ event.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <input type="hidden" name="category" value="{{ cat.id }}">
+                    </form>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</section>    
+<!-- ==========Ticket-Search========== -->
+
+<!-- ==========Event-Section========== -->
+{% load get_item %}
+<section class="event-section padding-top padding-bottom bg-four">
+    <div class="container">
+        <div class="tab">
+            <div class="section-header-2">
+                <div class="left">
+                    <h2 class="title">events</h2>
+                    <p>Be sure not to miss these Event today.</p>
+                </div>
+                <ul class="tab-menu">
+                    <li class="active">
+                        now showing 
+                    </li>
+                    <li>
+                        coming soon
+                    </li>
+                    <li>
+                        exclusive
+                    </li>
+                </ul>
+            </div>
+            <div class="tab-area mb-30-none">
+                <div class="tab-item active">
+                    <div class="owl-carousel owl-theme tab-slider">
+                        {% for event in featured_events %}
+                        <div class="item">
+                            <div class="event-grid">
+                                <div class="movie-thumb c-thumb">
+                                    <a href="{% url 'event_detail' event.id %}">
+                                        {% if event.image %}
+                                            <img src="{{ event.image.url }}" alt="{{ event.name }}">
+                                        {% elif event.image_url %}
+                                            <img src="{{ event.image_url }}" alt="{{ event.name }}">
+                                        {% else %}
+                                            <img src="https://pixner.net/boleto/demo/assets/images/event/event01.jpg" alt="{{ event.name }}">
+                                        {% endif %}
+                                    </a>
+                                    <div class="event-date">
+                                        <h6 class="date-title">{{ event.date|date:"d" }}</h6>
+                                        <span>{{ event.date|date:"M" }}</span>
+                                    </div>
+                                </div>
+                                <div class="movie-content bg-one">
+                                    <h5 class="title m-0">
+                                        <a href="{% url 'event_detail' event.id %}">{{ event.name }}</a>
+                                    </h5>
+                                    <div class="movie-rating-percent">
+                                        <span>{{ event.location }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% empty %}
+                        <p class="no-events">No upcoming events.</p>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% for cat, events in categories_with_events %}
+                <div class="tab-item">
+                    <h3 class="title" style="margin: 20px 0 10px; text-transform: capitalize;">{{ cat.name }}</h3>
+                    <div class="owl-carousel owl-theme tab-slider">
+                        {% for event in events %}
+                        <div class="item">
+                            <div class="event-grid">
+                                <div class="movie-thumb c-thumb">
+                                    <a href="{% url 'event_detail' event.id %}">
+                                        {% if event.image %}
+                                            <img src="{{ event.image.url }}" alt="{{ event.name }}">
+                                        {% elif event.image_url %}
+                                            <img src="{{ event.image_url }}" alt="{{ event.name }}">
+                                        {% else %}
+                                            <img src="https://pixner.net/boleto/demo/assets/images/event/event01.jpg" alt="{{ event.name }}">
+                                        {% endif %}
+                                    </a>
+                                    <div class="event-date">
+                                        <h6 class="date-title">{{ event.date|date:"d" }}</h6>
+                                        <span>{{ event.date|date:"M" }}</span>
+                                    </div>
+                                </div>
+                                <div class="movie-content bg-one">
+                                    <h5 class="title m-0">
+                                        <a href="{% url 'event_detail' event.id %}">{{ event.name }}</a>
+                                    </h5>
+                                    <div class="movie-rating-percent">
+                                        <span>{{ event.location }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% empty %}
+                        <p class="no-events">No events in {{ cat.name }}.</p>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</section>
+<!-- ==========Event-Section========== -->
+
+<!-- ==========Dynamic Categories-Section========== -->
+ {% for category, events in categories_with_events %}
+<section class="sports-section padding-top padding-bottom">
+    <div class="container">
+        <div class="tab">
+            <div class="section-header-2">
+                <div class="left">
+                    <h2 class="title">sports</h2>
+                    <p>Be sure not to miss these Sports today.</p>
+                </div>
+            </div>
+            <div class="tab-area mb-30-none">
+                <div class="tab-item">
+                    <div class="owl-carousel owl-theme tab-slider">
+                        <div class="item">
+                            <div class="sports-grid">
+                                <div class="movie-thumb c-thumb">
+                                    <a href="#0">
+                                        <img src="https://pixner.net/boleto/demo/assets/images/sports/sports01.jpg" alt="sports">
+                                    </a>
+                                    <div class="event-date">
+                                        <h6 class="date-title">28</h6>
+                                        <span>Dec</span>
+                                    </div>
+                                </div>
+                                <div class="movie-content bg-one">
+                                    <h5 class="title m-0">
+                                        <a href="#0">football league tournament</a>
+                                    </h5>
+                                    <div class="movie-rating-percent">
+                                        <span>327 Montague Street</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- ==========Sports-Section========== -->
+
+<!-- ========== Dynamic Categories Section ========== -->
+{% for category, events in categories_with_events %}
+<section class="category-section padding-top padding-bottom">
+    <div class="container">
+        <div class="section-header-2">
+            <div class="left">
+                <h2 class="title">{{ category.name }}</h2>
+                <p>Be sure not to miss these {{ category.name }} events today.</p>
+            </div>
+        </div>
+
+        <div class="row mb-30-none justify-content-center">
+            {% for event in events %}
+            <div class="col-sm-6 col-lg-4">
+                <div class="movie-grid">
+                    <div class="movie-thumb c-thumb">
+                        <a href="{% url 'event_detail' event.id %}">
+                            {% if event.image %}
+                                <img src="{{ event.image.url }}" alt="{{ event.name }}">
+                            {% elif event.image_url %}
+                                <img src="{{ event.image_url }}" alt="{{ event.name }}">
+                            {% else %}
+                                <img src="https://pixner.net/boleto/demo/assets/images/event/event01.jpg" alt="{{ event.name }}">
+                            {% endif %}
+                        </a>
+                        <div class="event-date">
+                            <h6 class="date-title">{{ event.date|date:"d" }}</h6>
+                            <span>{{ event.date|date:"M" }}</span>
+                        </div>
+                    </div>
+                    <div class="movie-content bg-one">
+                        <h5 class="title m-0">
+                            <a href="{% url 'event_detail' event.id %}">{{ event.name }}</a>
+                        </h5>
+                        <div class="movie-rating-percent">
+                            <span>{{ event.location }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <p class="no-events">No events available in {{ category.name }}.</p>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endfor %}
+<!-- ========== Dynamic Categories Section ========== -->
+
+
+{% endblock %}

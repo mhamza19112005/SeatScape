@@ -108,9 +108,20 @@
         <div class="tab">
             <div class="section-header-2">
                 <div class="left">
-                    <h2 class="title">featured Events</h2>
+                    <h2 class="title">events</h2>
                     <p>Be sure not to miss these Event today.</p>
                 </div>
+                <ul class="tab-menu">
+                    <li class="active">
+                        now showing 
+                    </li>
+                    <li>
+                        coming soon
+                    </li>
+                    <li>
+                        exclusive
+                    </li>
+                </ul>
             </div>
             <div class="tab-area mb-30-none">
                 <div class="tab-item active">
@@ -487,7 +498,7 @@
 
 <!-- ========== Dynamic Categories Section ========== -->
 {% for category, events in categories_with_events %}
-<section class="sports-section padding-top padding-bottom">
+<section class="category-section padding-top padding-bottom">
     <div class="container">
         <div class="section-header-2">
             <div class="left">
@@ -496,9 +507,9 @@
             </div>
         </div>
 
-        <div class="owl-carousel owl-theme tab-slider">
+        <div class="row mb-30-none justify-content-center">
             {% for event in events %}
-            <div class="item">
+            <div class="col-sm-6 col-lg-4">
                 <div class="movie-grid">
                     <div class="movie-thumb c-thumb">
                         <a href="{% url 'event_detail' event.id %}">
@@ -534,33 +545,5 @@
 {% endfor %}
 <!-- ========== Dynamic Categories Section ========== -->
 
-{% block extra_js %}
-<script>
-    $(document).ready(function() {
-        // Initialize all owl-carousel sliders
-        $('.owl-carousel').each(function() {
-            $(this).owlCarousel({
-                loop: true,
-                margin: 30,
-                nav: false,
-                dots: false,
-                autoplay: true,
-                autoplayTimeout: 5000,
-                responsive: {
-                    0: {
-                        items: 1
-                    },
-                    576: {
-                        items: 2
-                    },
-                    992: {
-                        items: 3
-                    }
-                }
-            });
-        });
-    });
-</script>
-{% endblock %}
 
 {% endblock %}
