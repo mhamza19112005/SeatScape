@@ -55,22 +55,30 @@ A modern Django-based event booking platform with advanced seat selection, unifi
    pip install -r requirements.txt
    ```
 
-4. **Apply migrations**
+4. **Set up environment variables**
+   ```bash
+   # Create a .env file based on .env.example
+   cp .env.example .env
+   # Edit the .env file with your actual values
+   ```
+   See [ENV_SETUP.md](ENV_SETUP.md) for detailed instructions.
+
+5. **Apply migrations**
    ```bash
    python manage.py migrate
    ```
 
-5. **Create superuser (optional)**
+6. **Create superuser (optional)**
    ```bash
    python manage.py createsuperuser
    ```
 
-6. **Run the development server**
+7. **Run the development server**
    ```bash
    python manage.py runserver
    ```
 
-7. **Access the application**
+8. **Access the application**
    - Open your browser and go to `http://127.0.0.1:8000/`
    - You'll see the unified authentication page
 
