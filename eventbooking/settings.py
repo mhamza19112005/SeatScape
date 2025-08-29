@@ -46,6 +46,7 @@ CONTACT_RECEIVER_EMAIL = os.environ.get('CONTACT_RECEIVER_EMAIL')
 ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'testserver', '*']
 
 # Stripe Settings
+# Always use environment variables for sensitive keys
 STRIPE_PUBLISHABLE_KEY = os.environ.get('STRIPE_PUBLISHABLE_KEY')
 STRIPE_SECRET_KEY = os.environ.get('STRIPE_SECRET_KEY')
 STRIPE_WEBHOOK_SECRET = os.environ.get('STRIPE_WEBHOOK_SECRET')
